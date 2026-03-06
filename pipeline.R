@@ -324,80 +324,7 @@ coregenes.pqtl[coeffs.protein.all, on=.(gene_symbol=Gene), `:=`(protein.coeff = 
 coregenes.eqtl.strict <- coregenes.eqtl[(locus.diversity>=8&pvalue_trans<=1e-5), ]
 coregenes.pqtl.strict <- coregenes.pqtl[(locus.diversity>=20&pvalue_trans<=1e-5), ]
 
-## Apply correct ordering 
-
-# gene_order_eqtl <- c("IRAG1", "RRP12", "EMP1", "MS4A6A", "DPYSL2", "GAS7", "MEF2C", 
-#                 "BCL11A", "COBLL1", "BANK1", "CXCR5", "TNFRSF13B", "TREM1", 
-#                 "TP53INP2", "SLC31A2", "SFTPD", "CCN3", "TESC", "UBB", "CD36", 
-#                 "RTN1", "KCNJ15", "ALOX5AP", "GPBAR1", "ABCA1", "IL2RB", "COLQ", "DHRS9")
-
-# coregenes.eqtl.strict <- coregenes.eqtl.strict[match(gene_order_eqtl, coregenes.eqtl.strict$gene_symbol), ]
 setorder(coregenes.eqtl.strict, pvalue_trans)
-
-# gene_order_pqtl <- c("ELANE", "COCH", "APOD", "ADIPOQ", "CKB", "IGFBP2", "CD300LG", 
-#                 "DSG2", "BTN2A1", "VASN", "PTPRF", "IL17RB", "CEACAM16", "CLEC4C", 
-#                 "TCL1A", "GCNT1", "CD209", "CPM", "CNTN3", "CTRB1", "CPA1", "REG3G", 
-#                 "MYOM3", "EDA2R")
-
-# coregenes.pqtl.strict <- coregenes.pqtl.strict[match(gene_order_pqtl, coregenes.pqtl.strict$gene_symbol), ]
-
-setorder(coregenes.pqtl.strict, pvalue_trans)
-
-## Genes exctarcted from Guzik's review
-immune_list <- c(
-  "SH2B3",      # also known as LNK
-  "CD247",      # T cell receptor component
-  "CD86",
-  "CD80",
-  "CD209",
-  "ADGRE5",     # also known as CD97
-  "FGFBP2",     # related to cytotoxic T cells
-  "PRF1",       # perforin 1, cytotoxic/apoptotic pathway
-  "GNLY",       # granulysin, NK/cytotoxic pathways
-  "NKG7",       # NK/granzyme related
-  "IL2",        # Interleukin-2
-  "IL2RA",      # Interleukin-2 receptor alpha
-  "IL2RB",      # Interleukin-2 receptor beta
-  "IL15",       # Interleukin-15
-  "LGALS9",     # Galectin-9, T cell regulation
-  "HAVCR2",     # TIM-3
-  "IRF5",
-  "IRAK1BP1",
-  "TRAF1",
-  "TXNDC17",
-  "PSMA3", "PSMA4", "PSMC3", "PSMC4", "PSMD3", "PSMD5", "SEC31A", # proteasome and antigen presentation genes
-  "NLRP3",
-  "IL1R2",
-  "IL1RAP",
-  "IL10RA",
-  "IL6", "IL7", "IL9", "IL10",  "IL17A", "IL17RB", "IL18", "IL21",           # key cytokines with evidence for causal or regulatory roles
-  "IFNG",       # Interferon gamma
-  "TBX21",      # T-bet, TH1 cell regulator
-  "TNF",        # Tumor necrosis factor
-  "RORC",       # RORgammaT (TH17 differentiation)
-  "SGK1",       # salt-sensing kinase
-  "CD70", "CD83", "CD28", "CD25", "CTLA4",                        # T cell costimulation and regulatory molecules
-  "TLR2", "TLR4", "TLR9",                                         # Toll-like receptors
-  "VEGFC", "VEGFD",                                               # lymphangiogenesis
-  "CXCR2",                                                        # chemokine receptor
-  "NOX1", "NOX2", "NOX4", "NOX5",                                 # NADPH oxidases (oxidative stress)
-  "ENaC", "NCC", "NKCC", "NHE3", "Kir4.1", "ClC-K"                # renal sodium transporters (sometimes family/complex, not always a single gene)
-)
-
-## Add genes that Paul identified as immune
-immune_genes <- fread(file.path(working.dir, "htens_genes.csv"))
-
-immune_list <- unique(c(immune_list, intersect(immune_genes[system=="immune"]$V2, coregenes.eqtl$gene_symbol)))
-immune_list <- unique(c(immune_list, intersect(immune_genes[system=="immune"]$V2, coregenes.pqtl$gene_symbol)))
-
-## Adding mannually from the discussion
-immune_list <- unique(c(immune_list, "CKB", "BCL11A", "BANK1", "MEF2C", "TREM1", "ALOX5AP", "TNFRSF13B", "IL2RB", "CPA1", "RTN1", "KCNJ15"))
-
-
-
-coregenes.guzik <- coregenes.eqtl[gene_symbol %in% immune_list]
-coregenes.guzik.pqtl <- coregenes.pqtl[gene_symbol %in% immune_list]
-coregenes.guzik <- rbind(coregenes.guzik, coregenes.guzik.pqtl, fill=TRUE)
 
 setorder(coregenes.pqtl.strict, pvalue_trans)
 
@@ -419,10 +346,6 @@ coregenes.tbl[all.mrres, on=.(gene_symbol=exposure), mr.pvalue:=pvalue]
 cols.select <- c("gene_symbol", "reported.genes", "estimate_trans", 
                  "protein.coeff", "protein.pvalue", "mr.pvalue", "pvalue_cis", "locus.diversity")
 
-# gene_symbol, gwas.hit, product.validated,
-#                                   mr.validated, model.validated,
-#                                   drug.validated
-
 all.evidence.tbl <- coregenes.tbl[, ..cols.select]
 all.evidence.tbl[, cis.validated := ifelse(pvalue_cis < 0.001, TRUE, FALSE)]
 all.evidence.tbl[, gwas.hit := fifelse(is.na(reported.genes), FALSE, TRUE)]
@@ -432,13 +355,6 @@ all.evidence.tbl[is.na(gwas.validated), gwas.validated := "-"]
 all.evidence.tbl[is.na(protein.coeff), protein.validated := "."]
 all.evidence.tbl[protein.pvalue > 1e-4, protein.validated := "0"]
 all.evidence.tbl[is.na(protein.validated), protein.validated := fifelse(sign(protein.coeff) != sign(estimate_trans), "-", "+")]
-# all.evidence.tbl[protein.coeff>0, protein.validated :=
-#             ifelse(protein.coeff>=2*estimate_trans, "+", ".")]
-# all.evidence.tbl[protein.coeff<0, protein.validated :=
-#             ifelse(protein.coeff<=2*estimate_trans, "+", ".")]
-
-# all.evidence.tbl[, protein.validated := fifelse(abs(protein.coeff)>2*abs(estimate_trans), "+", ".")]
-# all.evidence.tbl[is.na(protein.validated), protein.validated := "."]
 all.evidence.tbl[, mr.validated := fifelse(mr.pvalue<0.01&locus.diversity>20, "+", ".")]
 all.evidence.tbl[, mr.validated := fifelse(mr.pvalue>=0.01&locus.diversity>20, "-", mr.validated)]
 
@@ -461,34 +377,6 @@ all.evidence.tbl[, model.validated := fifelse(model.validated=="+", "+", "-")]
 all.evidence.tbl[, monogenic.cause := fifelse(monogenic.cause=="+", "+", "-")]
 all.evidence.tbl[, drug.validated := fifelse(drug.validated=="+", "+", "-")]
 
-## Evidence for immune genes
-## Join with MR
-coregenes.guzik[all.mrres, on=.(gene_symbol=exposure), mr.pvalue:=pvalue]
-all.evidence.immune <- coregenes.guzik[, ..cols.select]
-all.evidence.immune[, cis.validated := ifelse(pvalue_cis < 0.001, TRUE, FALSE)]
-all.evidence.immune[, gwas.hit := fifelse(is.na(reported.genes), FALSE, TRUE)]
-all.evidence.immune[, gwas.validated := fifelse((cis.validated | gwas.hit), "+", "-")]
-all.evidence.immune[is.na(gwas.validated), gwas.validated := "-"]
-## 4. validated by the association with the gene product
-# all.evidence.immune[, protein.validated := "."]
-# all.evidence.immune[protein.coeff>0, protein.validated :=
-#             ifelse(protein.coeff>=2*estimate_trans, "+", ".")]
-# all.evidence.immune[protein.coeff<0, protein.validated :=
-#             ifelse(protein.coeff<=2*estimate_trans, "+", ".")]
-# all.evidence.immune[, protein.validated :=
-#             ifelse(protein.coeff>=2*estimate_trans, "+", ".")]
-
-all.evidence.immune[is.na(protein.coeff), protein.validated := "."]
-all.evidence.immune[protein.pvalue > 1e-4, protein.validated := "0"]
-all.evidence.immune[is.na(protein.validated), protein.validated := fifelse(sign(protein.coeff) != sign(estimate_trans), "-", "+")]
-
-all.evidence.immune[, mr.validated := fifelse(mr.pvalue<0.01&locus.diversity>20, "+", ".")]
-all.evidence.immune[, mr.validated := fifelse(mr.pvalue>=0.01&locus.diversity>20, "-", mr.validated)]
-
-xls.tbl.immune <- all.evidence.immune[, .(gene_symbol, gwas.validated, protein.validated,
-                                  mr.validated)]
-write_xlsx(xls.tbl.immune, "Core_genes_immune_evidence.xlsx")
-
 cols.select <- c(cols.select, "z_trans", "pvalue_trans", "studyid", "gw.variance")
 coeffs.protein.core.joined <- coeffs.protein.core[coregenes.tbl[, ..cols.select], on="Gene==gene_symbol", nomatch=NA] 
 coeffs.protein.core.joined[,study:=car::recode(studyid,
@@ -498,60 +386,6 @@ coeffs.protein.core.joined[, coeff := as.character(coeff)]
 coeffs.protein.core.joined[is.na(coeff), coeff := "."]
 coeffs.protein.core.joined[is.na(pvalue.formatted), pvalue.formatted := "."]
 setorder(coeffs.protein.core.joined, pvalue_trans)
-
-## Add references
-## eQTL
-# all.evidence.tbl[gene_symbol == "TREM1", `:=`(
-#   drug.validated = "+\\cite{francoisProspectiveEvaluationEfficacy2023}"
-# )]
-# # all.evidence.tbl[gene_symbol == "GPBAR1", `:=`(
-# #   drug.validated = "+\\cite{heTakedaProteinCoupled2025}"
-# # )]
-# all.evidence.tbl[gene_symbol == "ABCA1", `:=`(
-#   monogenic.cause = "+\\cite{rhyneMultipleSpliceDefects2009}"
-# #   ,
-# #   drug.validated = "+\\cite{choiBiomedicalAdvancesABCA12023}"
-# )]
-
-# ## pQTL
-# all.evidence.tbl[gene_symbol == "IL17RB", `:=`(
-#   drug.validated = "+\\cite{davisInterleukin17AKey2021}"
-# )]
-# all.evidence.tbl[gene_symbol == "ADIPOQ", `:=`(
-#   monogenic.cause = "+\\cite{simeoneDominantNegativeADIPOQ2022}"
-# #   ,
-# #   drug.validated = "+\\cite{raisulabedin303ORNotchSignaling2024}"
-# )]
-# # all.evidence.tbl[gene_symbol == "CKB", `:=`(
-# #   drug.validated = "+\\cite{brewsterCreatineKinaseEnergy2018}"
-# # )]
-# all.evidence.tbl[gene_symbol == "DSG2", `:=`(
-#   monogenic.cause = "+\\cite{sumidaFourCardiomyopathyPatients2024}"
-# )]
-# all.evidence.tbl[gene_symbol == "MYOM3", `:=`(
-#   monogenic.cause = "+\\cite{rouillonSerumProteomicProfiling2015}"
-# )]
-# all.evidence.tbl[gene_symbol == "ELANE", `:=`(
-#   monogenic.cause = "+\\cite{tidwellNeutropeniaassociatedELANEMutations2014}"
-# #   ,
-# #   drug.validated = "+\\cite{makaryanElastaseInhibitorsPotential2017}"
-# )]
-
-# all.evidence.tbl[gene_symbol == "ELANE", `:=`(
-#   monogenic.cause = "+\\cite{tidwellNeutropeniaassociatedELANEMutations2014}"
-# #   ,
-# #   drug.validated = "+\\cite{makaryanElastaseInhibitorsPotential2017}"
-# )]
-
-# all.evidence.tbl[gene_symbol == "EDA2R", `:=`(
-#   monogenic.cause = "+\\cite{farringtonRolesEDA2RAgeing2025}"
-# )]
-
-# # all.evidence.tbl[gene_symbol == "COCH", `:=`(
-# #   model.validated = "+\\cite{carreonInteractionCochlinMechanosensitive2017}"
-# # #   ,
-# # #   drug.validated = "+\\cite{vriezeAllelespecificAntisenseOligonucleotide2020}"
-# #  )]
 
 rmarkdown::render(
     'hypertension_paper.Rmd',

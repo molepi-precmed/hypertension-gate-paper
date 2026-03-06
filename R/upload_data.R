@@ -24,19 +24,27 @@ if (!DATA_TAG %in% existing_tags) {
   piggyback::pb_new_release(repo = REPO, tag = DATA_TAG)
 }
 
-# Gather all files to upload (exclude the manifest, upload it last)
-all_files     <- list.files(SOURCE_DIR, full.names = TRUE, recursive = FALSE)
+# Gather all files to upload (recursive: include files inside eqtl/, pqtl/, mrresults/, etc.)
+all_files     <- list.files(SOURCE_DIR, full.names = TRUE, recursive = TRUE)
+all_files     <- all_files[!file.info(all_files)$isdir]  # only regular files, not directories
 manifest_file <- file.path(SOURCE_DIR, "data_manifest.csv")
 data_files    <- setdiff(all_files, manifest_file)
 
-message("[upload_data] Uploading ", length(data_files), " data file(s)...")
+BATCH_SIZE <- 50L  # upload in batches to avoid exhausting R's connection limit (~128)
 
-piggyback::pb_upload(
-  file      = data_files,
-  repo      = REPO,
-  tag       = DATA_TAG,
-  overwrite = "use_timestamps"
-)
+message("[upload_data] Uploading ", length(data_files), " data file(s) in batches of ", BATCH_SIZE, "...")
+
+for (i in seq(1L, length(data_files), by = BATCH_SIZE)) {
+  batch <- data_files[seq(i, min(i + BATCH_SIZE - 1L, length(data_files)))]
+  piggyback::pb_upload(
+    file      = batch,
+    repo      = REPO,
+    tag       = DATA_TAG,
+    overwrite = "use_timestamps"
+  )
+  gc()  # release connections between batches
+  message("  uploaded ", min(i + BATCH_SIZE - 1L, length(data_files)), " / ", length(data_files))
+}
 
 # Upload manifest last so its timestamp confirms all data is present
 if (file.exists(manifest_file)) {
