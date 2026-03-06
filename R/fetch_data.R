@@ -24,6 +24,19 @@ if (token == "") {
   message("[fetch_data] GITHUB_PAT not set. If you see 403 errors, set it for higher rate limits.")
 }
 
+# Create subdirs under dest so assets named e.g. "eqtl/file.gz" are saved as data/eqtl/file.gz
+info <- tryCatch(
+  piggyback::pb_list(repo = REPO, tag = DATA_TAG, .token = if (nzchar(token)) token else NULL),
+  error = function(e) NULL
+)
+if (!is.null(info) && "file_name" %in% names(info)) {
+  for (f in info[["file_name"]]) {
+    if (grepl("/", f, fixed = TRUE)) {
+      dir.create(file.path(DEST_DIR, dirname(f)), recursive = TRUE, showWarnings = FALSE)
+    }
+  }
+}
+
 message("[fetch_data] Downloading data files from GitHub Release '", DATA_TAG, "'...")
 
 piggyback::pb_download(
