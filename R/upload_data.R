@@ -1,5 +1,5 @@
 # R/upload_data.R
-# Uploads all files from the local data directory to a GitHub Release.
+# Uploads the local data directory as a single compressed archive to a GitHub Release.
 # Run manually: Rscript R/upload_data.R
 # Requires GITHUB_PAT environment variable with repo write permissions.
 
@@ -8,6 +8,7 @@ library(piggyback)
 REPO        <- "molepi-precmed/hypertension-gate-paper"
 DATA_TAG    <- "data-release"
 SOURCE_DIR  <- file.path("..", "hypertension-gate-data")
+ARCHIVE_NAME <- "hypertension-gate-data.tar.gz"
 
 if (!dir.exists(SOURCE_DIR)) {
   stop("Local data directory not found: ", SOURCE_DIR)
@@ -24,45 +25,25 @@ if (!DATA_TAG %in% existing_tags) {
   piggyback::pb_new_release(repo = REPO, tag = DATA_TAG)
 }
 
-# Gather all files to upload (recursive: include files inside eqtl/, pqtl/, mrresults/, etc.)
-all_files     <- list.files(SOURCE_DIR, full.names = TRUE, recursive = TRUE)
-all_files     <- all_files[!file.info(all_files)$isdir]  # only regular files, not directories
-manifest_file <- file.path(SOURCE_DIR, "data_manifest.csv")
-data_files    <- setdiff(all_files, manifest_file)
+# Create archive: contents of SOURCE_DIR (eqtl/, pqtl/, *.csv, etc.) at root of tarball
+message("[upload_data] Creating archive of ", SOURCE_DIR, " ...")
+tarball_path <- tempfile(fileext = ".tar.gz")
+owd <- setwd(SOURCE_DIR)
+on.exit(setwd(owd))
+files <- list.files(recursive = TRUE, include.dirs = FALSE)
+if (length(files) == 0L) stop("No files found in ", SOURCE_DIR)
+tar(tarball_path, files = files, compression = "gzip", tar = "internal")
+setwd(owd)
+on.exit(NULL)
 
-# Use relative path (from SOURCE_DIR) as release asset name so download preserves structure (data/eqtl/..., data/pqtl/..., etc.)
-base_dir <- normalizePath(SOURCE_DIR, mustWork = TRUE, winslash = "/")
-rel_name <- function(f) {
-  full <- normalizePath(f, mustWork = TRUE, winslash = "/")
-  sub(paste0("^", gsub("([.?*+^$[\\\\]()])", "\\\\\\1", base_dir), "/?"), "", full)
-}
-data_names <- vapply(data_files, rel_name, character(1L))
+message("[upload_data] Uploading ", ARCHIVE_NAME, " to release '", DATA_TAG, "'...")
+piggyback::pb_upload(
+  file      = tarball_path,
+  repo      = REPO,
+  tag       = DATA_TAG,
+  name      = ARCHIVE_NAME,
+  overwrite = TRUE
+)
+unlink(tarball_path)
 
-# pb_upload expects one file and one name per call (API expects scalar name)
-message("[upload_data] Uploading ", length(data_files), " data file(s)...")
-
-for (k in seq_along(data_files)) {
-  piggyback::pb_upload(
-    file      = data_files[k],
-    repo      = REPO,
-    tag       = DATA_TAG,
-    name      = data_names[k],
-    overwrite = "use_timestamps"
-  )
-  if (k %% 50L == 0L) gc()
-  if (k %% 50L == 0L) message("  uploaded ", k, " / ", length(data_files))
-}
-
-# Upload manifest last so its timestamp confirms all data is present
-if (file.exists(manifest_file)) {
-  piggyback::pb_upload(
-    file      = manifest_file,
-    repo      = REPO,
-    tag       = DATA_TAG,
-    name      = "data_manifest.csv",
-    overwrite = "use_timestamps"
-  )
-}
-
-message("[upload_data] All files uploaded to release '", DATA_TAG, "'.")
-
+message("[upload_data] Done. Single asset '", ARCHIVE_NAME, "' uploaded to release '", DATA_TAG, "'.")

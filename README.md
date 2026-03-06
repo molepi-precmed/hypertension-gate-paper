@@ -15,11 +15,10 @@ to exist as a **sibling** directory on your machine:
 
 - If `../hypertension-gate-data/` exists, the manuscript will read data from
   there (local development).
-- Otherwise, `make data` will fetch a copy into `hypertension-gate-paper/data/`
-  from the GitHub Release tag `data-release` using `piggyback`. For many files,
-  GitHub’s API rate limit (60 req/hr unauthenticated) can cause 403 errors;
-  **set `GITHUB_PAT`** (a personal access token with no extra scopes) for higher
-  limits when running `make data`.
+- Otherwise, `make data` will download a single archive from the GitHub Release
+  tag `data-release` and extract it into `hypertension-gate-paper/data/`
+  (preserving `eqtl/`, `pqtl/`, `mrresults/`, etc.). One asset keeps the layout
+  intact and avoids API rate limits; **set `GITHUB_PAT`** if you see 403 errors.
 
 ## Build the manuscript
 
@@ -40,10 +39,8 @@ Useful targets:
 ## Setting GITHUB_PAT (for data download)
 
 If you run `make data` without a local `../hypertension-gate-data/` directory, the
-script downloads release assets from GitHub. Unauthenticated requests are limited
-to 60 API calls per hour, which can trigger **403** errors when many files are
-downloaded. Setting a GitHub Personal Access Token (PAT) raises the limit and
-avoids this.
+script downloads one archive from the release. If you see **403** errors (e.g. on
+private repos or under rate limits), set a GitHub Personal Access Token (PAT).
 
 ### Create a token
 
@@ -74,10 +71,14 @@ errors from the download step should stop.
 
 ## Data uploads (authors only)
 
-To upload data from the local sibling directory to GitHub Releases:
+To upload data from the local sibling directory to GitHub Releases (as a single
+`hypertension-gate-data.tar.gz` asset):
 
 ```bash
 Rscript R/upload_data.R
 ```
 
-This requires `GITHUB_PAT` with write access to the repository.
+This requires `GITHUB_PAT` with write access to the repository. The script
+archives the contents of `../hypertension-gate-data/` and uploads that one file;
+`make data` then downloads and extracts it so `data/eqtl/`, `data/pqtl/`, etc.
+match the original layout.
