@@ -79,14 +79,16 @@ errors from the download step should stop.
 The package **tseries** (pulled in indirectly) compiles Fortran code and can fail
 with “gfortran: No such file or directory” on machines without a Fortran compiler.
 To avoid this, the project **ignores** the chain that requires it
-(`tseries` → `forecast` → `doBy` → `pbkrtest` → `car`) in `renv/settings.json`.
-`make deps` should then succeed without installing gfortran, and the manuscript
-build does not use these packages.
+(`tseries` → `forecast` → `doBy` → `pbkrtest` → `car`) plus **lme4** in
+`renv/settings.json`. `make deps` should then succeed without gfortran and
+without running into **lme4**’s OpenMP load error on some macOS setups
+(`symbol not found: ___kmpc_dispatch_deinit`). The manuscript build does not
+use these packages.
 
-If you need **car**, **forecast**, or **tseries** for other work:
+If you need **car**, **forecast**, **tseries**, or **lme4** for other work:
 
-- **macOS:** install a Fortran compiler, e.g. `brew install gcc`, then run
-  `make deps` again. To allow renv to install the full set, remove the five
+- **macOS:** install a Fortran compiler (e.g. `brew install gcc`) and, for
+  lme4, the OpenMP runtime (e.g. `brew install libomp`). Then remove the six
   package names from `"ignored.packages"` in `renv/settings.json` and run
   `renv::restore()`.
 

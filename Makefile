@@ -28,9 +28,8 @@ data:
 	$(RSCRIPT) R/fetch_data.R
 
 ## Run the analysis pipeline, which renders the manuscript
-build: $(OUTPUT_PDF)
-
-$(OUTPUT_PDF): pipeline.R $(MANUSCRIPT) R/config.R R/utils.R
+## (Always runs; data/ is not in the dependency list so we do not use file timestamps.)
+build:
 	@echo ">>> Running analysis pipeline..."
 	@mkdir -p output
 	$(RSCRIPT) pipeline.R
