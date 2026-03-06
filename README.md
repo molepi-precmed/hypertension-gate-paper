@@ -72,26 +72,6 @@ export GITHUB_PAT="ghp_xxxxxxxxxxxx"
 Then run `make data` (or `make`) as usual. With the token set, 403 rate-limit
 errors from the download step should stop.
 
-## Troubleshooting `make deps`
-
-### tseries / gfortran compilation error
-
-The package **tseries** (pulled in indirectly) compiles Fortran code and can fail
-with “gfortran: No such file or directory” on machines without a Fortran compiler.
-To avoid this, the project **ignores** the chain that requires it
-(`tseries` → `forecast` → `doBy` → `pbkrtest` → `car`) plus **lme4** in
-`renv/settings.json`. `make deps` should then succeed without gfortran and
-without running into **lme4**’s OpenMP load error on some macOS setups
-(`symbol not found: ___kmpc_dispatch_deinit`). The manuscript build does not
-use these packages.
-
-If you need **car**, **forecast**, **tseries**, or **lme4** for other work:
-
-- **macOS:** install a Fortran compiler (e.g. `brew install gcc`) and, for
-  lme4, the OpenMP runtime (e.g. `brew install libomp`). Then remove the six
-  package names from `"ignored.packages"` in `renv/settings.json` and run
-  `renv::restore()`.
-
 ## Data uploads (authors only)
 
 To upload data from the local sibling directory to GitHub Releases:
