@@ -16,7 +16,10 @@ to exist as a **sibling** directory on your machine:
 - If `../hypertension-gate-data/` exists, the manuscript will read data from
   there (local development).
 - Otherwise, `make data` will fetch a copy into `hypertension-gate-paper/data/`
-  from the GitHub Release tag `data-release` using `piggyback`.
+  from the GitHub Release tag `data-release` using `piggyback`. For many files,
+  GitHub’s API rate limit (60 req/hr unauthenticated) can cause 403 errors;
+  **set `GITHUB_PAT`** (a personal access token with no extra scopes) for higher
+  limits when running `make data`.
 
 ## Build the manuscript
 
@@ -33,6 +36,59 @@ Useful targets:
 - `make build`: render `hypertension_paper.Rmd` → `output/hypertension_paper.pdf`
 - `make clean`: remove compiled outputs
 - `make clean-data`: remove fetched data files under `data/` (keeps `.gitkeep`)
+
+## Setting GITHUB_PAT (for data download)
+
+If you run `make data` without a local `../hypertension-gate-data/` directory, the
+script downloads release assets from GitHub. Unauthenticated requests are limited
+to 60 API calls per hour, which can trigger **403** errors when many files are
+downloaded. Setting a GitHub Personal Access Token (PAT) raises the limit and
+avoids this.
+
+### Create a token
+
+1. On GitHub: **Settings** → **Developer settings** → **Personal access tokens** →
+   **Tokens (classic)** → **Generate new token (classic)**.
+2. Give it a name (e.g. `hypertension-gate-paper data`), choose an expiry, and
+   leave all scopes **unchecked** (no scopes are required for public release
+   downloads).
+3. Generate the token and copy it (it starts with `ghp_`). You won’t see it again.
+
+### Use the token when running the build
+
+**Option A — one-off (current terminal only):**
+
+```bash
+GITHUB_PAT="ghp_xxxxxxxxxxxx" make data
+```
+
+**Option B — in your shell profile** (e.g. `~/.zshrc` or `~/.bashrc`), so it’s
+set whenever you open a terminal:
+
+```bash
+export GITHUB_PAT="ghp_xxxxxxxxxxxx"
+```
+
+Then run `make data` (or `make`) as usual. With the token set, 403 rate-limit
+errors from the download step should stop.
+
+## Troubleshooting `make deps`
+
+### tseries / gfortran compilation error
+
+The package **tseries** (pulled in indirectly) compiles Fortran code and can fail
+with “gfortran: No such file or directory” on machines without a Fortran compiler.
+To avoid this, the project **ignores** the chain that requires it
+(`tseries` → `forecast` → `doBy` → `pbkrtest` → `car`) in `renv/settings.json`.
+`make deps` should then succeed without installing gfortran, and the manuscript
+build does not use these packages.
+
+If you need **car**, **forecast**, or **tseries** for other work:
+
+- **macOS:** install a Fortran compiler, e.g. `brew install gcc`, then run
+  `make deps` again. To allow renv to install the full set, remove the five
+  package names from `"ignored.packages"` in `renv/settings.json` and run
+  `renv::restore()`.
 
 ## Data uploads (authors only)
 
