@@ -7,6 +7,8 @@ output:
     keep_tex: false
     number_sections: true
     latex_engine: xelatex
+    includes:
+      in_header: preamble.tex
 bibliography: bibliography.bib
 ---
 
