@@ -1,15 +1,45 @@
 ---
 title: "Genome-wide Aggregated Trans-Effects in Hypertension"
-author: "Your Name"
-date: "`r Sys.Date()`"
+titlerunnning: "Genetic evidence for causal transcripts and proteins in hypertension"
+author:
+- name: Svitlana Braichenko
+- name: Andrii Iakovliev
+- name: Athina Spiliopoulou
+- name: Paul M McKeigue
+- name: Helen M Colhoun
+header-includes:
+  \usepackage{authblk}
+  \usepackage[T1]{fontenc}
+  \let\origquote\quote
+  \def\quote{\origquote\itshape}
+  \usepackage{graphicx}
+  \usepackage{longtable}
+  \usepackage{booktabs}
+  \usepackage{float}
+  \usepackage{array}
+  \usepackage{threeparttable}
+  \usepackage{soul}
+  \floatplacement{figure}{H}
+
+# output: word_document
 output:
-  pdf_document:
-    keep_tex: false
-    number_sections: true
+  rticles::plos_article:
+    template: template.tex
+    citation_package: natbib
     latex_engine: xelatex
     includes:
       in_header: preamble.tex
-bibliography: bibliography.bib
+    keep_tex: true
+    fig_caption: yes
+    number_sections: false
+    md_extensions: -autolink_bare_uris
+bibliography: "./bibliography.bib"
+always_allow_html: true
+urlcolor: blue
+linenumbers: false
+# csl: doc/ajhg.csl
+link-citations: true
+abstract: |
 ---
 
 ```{r setup, include=FALSE}

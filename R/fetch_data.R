@@ -1,6 +1,6 @@
 # R/fetch_data.R
 # Downloads the project data archive from a GitHub Release and extracts it into data/.
-# Skipped automatically if the local sibling data directory is present.
+# Skipped if the local sibling data directory exists, or if data/ already contains files.
 
 LOCAL_DATA_DIR <- file.path("..", "hypertension-gate-data")
 if (dir.exists(LOCAL_DATA_DIR)) {
@@ -8,11 +8,17 @@ if (dir.exists(LOCAL_DATA_DIR)) {
   quit(save = "no", status = 0)
 }
 
+DEST_DIR <- "data"
+existing <- setdiff(list.files(DEST_DIR, all.files = FALSE), ".gitkeep")
+if (length(existing) > 0L) {
+  message("[fetch_data] data/ already contains files. No download needed.")
+  quit(save = "no", status = 0)
+}
+
 library(piggyback)
 
 REPO         <- "molepi-precmed/hypertension-gate-paper"
 DATA_TAG     <- "data-release"
-DEST_DIR     <- "data"
 ARCHIVE_NAME <- "hypertension-gate-data.tar.gz"
 
 if (!dir.exists(DEST_DIR)) dir.create(DEST_DIR, recursive = TRUE)
