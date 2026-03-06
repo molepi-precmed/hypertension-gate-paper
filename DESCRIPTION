@@ -1,0 +1,22 @@
+Package: hypertension-gate-paper
+Type: Project
+Title: Genome-wide Aggregated Trans-Effects in Hypertension
+Version: 0.1.0
+Authors@R: person("Your Name", email = "your.email@institution.ac.uk",
+    role = c("aut", "cre"))
+Description: Reproducible manuscript for the GATE hypertension analysis.
+License: CC BY 4.0
+Depends:
+    R (>= 4.3.0)
+Imports:
+    rmarkdown,
+    knitr,
+    kableExtra,
+    piggyback,
+    gh,
+    here,
+    dplyr,
+    ggplot2,
+    data.table,
+    seriation
+

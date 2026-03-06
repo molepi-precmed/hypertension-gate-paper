@@ -1,0 +1,30 @@
+\usepackage[most]{tcolorbox}
+\newtcolorbox{myquote}[1][]{%
+  colback=black!5,
+  colframe=black!5,
+  notitle,
+  sharp corners,
+  enhanced,
+  breakable,
+}
+
+\usepackage{xcolor}
+\usepackage{inputenc}
+
+\usepackage{blindtext}
+\newcounter{mparcnt}
+\renewcommand\themparcnt{\textcolor{blue}{\textbf{ \arabic{mparcnt} }}}
+\newcommand\mpar[1]{\refstepcounter{mparcnt}\marginpar{\flushright \themparcnt#1}}
+
+\usepackage{soul}
+\soulregister\ref7
+\soulregister\textsuperscript7
+\soulregister\emph7
+
+\newcommand{\beginsupplement}{%
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+ 
