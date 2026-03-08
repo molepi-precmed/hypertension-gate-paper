@@ -32,6 +32,7 @@ generate.summaries <- FALSE
 min.eql.diversity <- 5
 min.pqtl.diversity <- 5
 min.pvalue <- 1e-5
+min.pvalue.pqtl <- 1e-6
 select.genes <- NULL
 overlap.flank <- 2e5
 
@@ -53,7 +54,7 @@ coeffs.eqtl <- process.coeffs(study="eqtl", gate.dir=basegatedir, working.dir,
 coeffs.pqtl <- process.coeffs(study="pqtl", gate.dir=basegatedir, working.dir,
                               coeffs.wide.file=coeffs.wide.pqtl.file,
                               min.diversity=min.pqtl.diversity,
-                              min.pvalue=min.pvalue, select.genes=select.genes)
+                              min.pvalue=min.pvalue.pqtl, select.genes=select.genes)
 
 ## Q-Q plots
 save.qqplot(study="eqtl", coeffs.wide=coeffs.eqtl$coeffs.wide, working.dir)
@@ -322,14 +323,14 @@ coregenes.pqtl[coeffs.protein.all, on=.(gene_symbol=Gene), `:=`(protein.coeff = 
 # coregenes.pqtl[abs(protein.coeff)>2*abs(estimate_trans), uniqueN(gene_symbol)]
 
 coregenes.eqtl.strict <- coregenes.eqtl[(locus.diversity>=8&pvalue_trans<=1e-5), ]
-coregenes.pqtl.strict <- coregenes.pqtl[(locus.diversity>=20&pvalue_trans<=1e-5), ]
+coregenes.pqtl.strict <- coregenes.pqtl[(locus.diversity>=20&pvalue_trans<=min.pvalue.pqtl), ]
 
 setorder(coregenes.eqtl.strict, pvalue_trans)
 
 setorder(coregenes.pqtl.strict, pvalue_trans)
 
 coregenes.eqtl.rest <- coregenes.eqtl[(locus.diversity<8&locus.diversity>=5&pvalue_trans<=1e-5), ]
-coregenes.pqtl.rest <- coregenes.pqtl[(locus.diversity<20&locus.diversity>=5&pvalue_trans<=1e-5), ]
+coregenes.pqtl.rest <- coregenes.pqtl[(locus.diversity<20&locus.diversity>=5&pvalue_trans<=min.pvalue.pqtl), ]
 
 phenoname <- "mean arterial pressure"
 

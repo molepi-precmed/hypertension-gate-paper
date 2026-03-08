@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only" default-locale="en-GB">
+  <info>
+    <title>Nature Genetics (custom)</title>
+    <id>http://www.zotero.org/styles/nature-genetics-custom</id>
+    <link href="http://www.zotero.org/styles/nature-genetics" rel="self"/>
+    <link href="http://www.nature.com/ng/pdf/gta.pdf" rel="documentation"/>
+    <category citation-format="numeric"/>
+    <category field="biology"/>
+    <category field="medicine"/>
+    <issn>1061-4036</issn>
+    <eissn>1546-1718</eissn>
+    <updated>2026-02-16T00:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+  </info>
+  <macro name="title">
+    <choose>
+      <if type="bill book graphic legal_case legislation motion_picture report song" match="any">
+        <text variable="title" font-style="italic"/>
+      </if>
+      <else>
+        <text variable="title"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="author">
+    <names variable="author">
+      <name sort-separator=", " initialize-with=". " name-as-sort-order="all" delimiter=", " delimiter-precedes-last="always" et-al-min="5" et-al-use-first="4"/>
+      <et-al font-style="italic"/>
+      <label form="short" prefix=" "/>
+      <substitute>
+        <names variable="editor"/>
+      </substitute>
+    </names>
+  </macro>
+  <macro name="access">
+    <choose>
+      <if variable="DOI">
+        <text variable="DOI" prefix="doi:"/>
+      </if>
+      <else-if variable="URL">
+        <text variable="URL"/>
+      </else-if>
+    </choose>
+  </macro>
+  <macro name="issuance">
+    <choose>
+      <if type="bill book graphic legal_case legislation motion_picture report song thesis" match="any">
+        <group delimiter=", ">
+          <text variable="publisher" prefix="(" suffix=")"/>
+        </group>
+      </if>
+      <else>
+        <group>
+          <text variable="container-title" font-style="italic" suffix=" "/>
+          <text variable="volume" font-weight="bold"/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+  <macro name="editor">
+    <names variable="editor" prefix="(" suffix=")">
+      <label form="short" suffix=" " strip-periods="true"/>
+      <name initialize-with=". " delimiter=", " delimiter-precedes-last="always"/>
+    </names>
+  </macro>
+  <citation collapse="citation-number">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout vertical-align="sup" delimiter=",">
+      <text variable="citation-number"/>
+    </layout>
+  </citation>
+  <bibliography et-al-min="5" et-al-use-first="4" second-field-align="flush">
+    <layout>
+      <text variable="citation-number" suffix="."/>
+      <group delimiter=" ">
+        <text macro="author" suffix="."/>
+        <text macro="title" suffix="."/>
+        <choose>
+          <if type="chapter paper-conference" match="any">
+            <group delimiter=" ">
+              <text term="in"/>
+              <text variable="container-title" font-style="italic"/>
+              <text macro="editor"/>
+              <text macro="issuance"/>
+              <text variable="page"/>
+            </group>
+          </if>
+          <else-if type="article-journal">
+            <group delimiter=", ">
+              <text macro="issuance"/>
+              <text variable="page"/>
+            </group>
+          </else-if>
+          <else>
+            <text macro="issuance"/>
+          </else>
+        </choose>
+        <date variable="issued" prefix="(" suffix=").">
+          <date-part name="year"/>
+        </date>
+      </group>
+    </layout>
+  </bibliography>
+</style>
