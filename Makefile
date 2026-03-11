@@ -49,8 +49,9 @@ clean:
 	@echo ">>> Cleaning output..."
 	rm -f output/hypertension_paper.pdf output/hypertension_paper.tex
 
-## Remove fetched data (leaves local sibling dir untouched)
+## Remove all contents of data/ (files and subdirs); keep data/.gitkeep
 clean-data:
-	@echo ">>> Removing fetched data files from data/..."
-	find data/ -type f ! -name '.gitkeep' -delete
+	@echo ">>> Removing all contents of data/ (including subfolders)..."
+	@find data/ -mindepth 1 -depth -delete 2>/dev/null || true
+	@touch data/.gitkeep
 
