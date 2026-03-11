@@ -82,3 +82,25 @@ This requires `GITHUB_PAT` with write access to the repository. The script
 archives the contents of `../hypertension-gate-data/` and uploads that one file;
 `make data` then downloads and extracts it so `data/eqtl/`, `data/pqtl/`, etc.
 match the original layout.
+
+## Using system R libraries (skip installing packages from scratch)
+
+On a host where R and the required packages are already installed (e.g. in
+`/usr/local/lib/R/site-library`, `/usr/lib/R/site-library`, `/usr/lib/R/library`),
+you can rely on those and avoid running `renv::restore()` or installing anything:
+
+```bash
+export USE_SYSTEM_R_LIBS=1
+make
+```
+
+With `USE_SYSTEM_R_LIBS=1`:
+
+- `make deps` does nothing (no renv restore, no downloads).
+- `make build` loads packages from the system library only; it does not install
+  missing packages. If a required package is missing, the pipeline stops with an
+  error.
+
+Leave `USE_SYSTEM_R_LIBS` unset on other machines if you want the usual
+behaviour: `make deps` restores from `renv.lock`, and the pipeline may install
+missing packages when needed.

@@ -1,5 +1,9 @@
 source("R/config.R")
 
+# Ensure required packages are available (load from .libPaths(), install if missing).
+for (pkg in REQUIRED_PACKAGES)
+  ensure_library(pkg)
+
 # Data and results live in the sibling hypertension-gate-data directory.
 working.dir <- DATA_DIR
 reports.dir <- getwd()
@@ -32,7 +36,7 @@ generate.summaries <- FALSE
 min.eql.diversity <- 5
 min.pqtl.diversity <- 5
 min.pvalue <- 1e-5
-min.pvalue.pqtl <- 1e-6
+min.pvalue.pqtl <- 1e-5
 select.genes <- NULL
 overlap.flank <- 2e5
 

@@ -36,6 +36,7 @@ header-includes:
   \usepackage{threeparttable}
   \usepackage{soul}
   \floatplacement{figure}{H}
+  \listfiles
 
 # output: word_document
 output:
@@ -138,7 +139,7 @@ Recent advances in statistical genetics and the availability of large-scale geno
 
 # Methods
 ## Data and resource availability
-All analysis code is provided in our GitHub repository, and summary statistics for associations between mean arterial pressure and all GATE scores are archived on Zenodo. UK Biobank data are available on application via the UK Biobank access portal. The platform used to generate locus-specific genotypic scores, together with the database of published GWAS summary statistics, is accessible at https://genoscores.cphs.mvm.ed.ac.uk/, and access requests for the GENOSCORES platform and accompanying R package should be directed to the corresponding author.​
+All analysis code is provided in our GitHub repository, and summary statistics for associations between mean arterial pressure and all GATE scores are archived on Zenodo. UK Biobank data are available on application via the UK Biobank access portal. The platform used to generate locus-specific genotypic scores, together with the database of published GWAS summary statistics, is accessible at [https://genoscores.cphs.mvm.ed.ac.uk/](https://genoscores.cphs.mvm.ed.ac.uk/), and access requests for the GENOSCORES platform and accompanying R package should be directed to the corresponding author.​
 
 ## GATE analysis
 GATE analysis is a two-stage procedure, as illustrated in Figure \ref{fig:GATE}. In the first stage, we use publicly available regression coefficients (weights) for the association of genome-wide SNP data with gene expression or protein levels (quantitative trait loci or eQTL/pQTL GWAS summary statistics). In the second stage, we apply these weights to individual-level genotypes in the target dataset (UKB) to compute a locus-specific *trans* score for each region and a genome-wide aggregated *trans* (GATE) score for each transcript or protein. These scores then are tested for association with the mean arterial pressure (MAP) in the target dataset. Genes whose GATE scores are significantly associated with the phenotype ($P<10^{-5}$), consist of effects of multiple unlinked *trans* QTLs are prioritized as putative core genes (hereafter referred to as core genes). GATE analysis methods have been reported in earlier works [@iakovlievGenomewideAggregatedTranseffects2023;@spiliopoulouGenomeWideAggregatedTrans;@zhou_genome-wide_2025;@iakovlievDiscoveryCoreGenes2025;@mckeigueGenomeWideAggregatedTransEffects2025].
@@ -177,33 +178,35 @@ On the other hand, we further sought external data for additional evidence to su
 
 Table \ref{tab:coregenes.eqtls.strict} presents the `r coregenes.eqtl.strict[, .N]` GATE scores associated with `r phenoname` at $P<10^{-5}$, where the effective number of _trans_ eQTLs  was at least $8$. 
 
-As shown in the table, there were `r coregenes.eqtl.strict[, .N]` genes that met these filtering criteria, with _TREM1_ being the most strongly associated. For the majority of these genes there was no evidence of an association of *cis* scores in that gene with MAP, with borderline significant associations for *cis* scores in  *BANK1*, *DPYSL2* and *GPBAR1*. Of the `r coregenes.eqtl.strict[, .N]` putative core genes, coregenes.eqtl.strict[!is.na(reported.genes),.N] have previous GWAS hit for essential hypertension with 200kb, most of which were not localised to any specific gene in the originating GWAS.
+As shown in the table, there were `r coregenes.eqtl.strict[, .N]` genes that met these filtering criteria, with _TREM1_ being the most strongly associated. For the majority of these genes there was no evidence of an association of *cis* scores in that gene with MAP, with borderline significant associations for *cis* scores in  *BANK1*, *DPYSL2* and *GPBAR1*. Of the `r coregenes.eqtl.strict[, .N]` putative core genes, `r coregenes.eqtl.strict[!is.na(reported.genes),.N]` have previous GWAS hit for essential hypertension with 200kb, most of which were not localised to any specific gene in the originating GWAS.
 
-Figure \ref{fig:corrplot.eqtls}, displays a heatmap of correlations between GATE scores based on aggregated _trans_ eQTLs ordered by hierarchical clustering. Strong correlations between scores indicate substantial sharing of _trans_ eQTLs contributing to the scores. (Table \ref{tab:transeqtls}). As shown there is a block of highly correlated scores within which there is a subcluster. Annotation of the known functions of these genes shows these genes  are mostly in immune pathways with the subcluster being B-cell related genes. To show sharing of _trans_ eQTLs , we grouped overlapping _trans_ eQTLs into clumps and listed all genes they contribute to as tabulated in Supplementary Table \ref{tab:transeqtls}<!---
- and visualized in Figure xx (INSERT the figure for the sharing of trans eQTLs)-->
-.  As highlighted in bold, many clumps harbor known GWAS hits for hypertension  and contribute to many core genes ( i.e. are “ peripheral master regulators” <!--- e.g. INSERT examples -->). 
+Figure \ref{fig:corrplot.eqtls}, displays a heatmap of correlations between GATE scores based on aggregated _trans_ eQTLs ordered by hierarchical clustering. Strong correlations between scores indicate substantial sharing of _trans_ eQTLs contributing to the scores (Table \ref{tab:transeqtls}). As shown there is a block of highly correlated scores within which there is a subcluster. Annotation of the known functions of these genes shows these genes are mostly in immune pathways with the subcluster being B-cell related genes. To show sharing of _trans_ eQTLs, we grouped overlapping _trans_ eQTLs into clumps and listed all genes they contribute to as tabulated in Supplementary Table \ref{tab:transeqtls} and those containg GWAS hits for hypertension are visualized in Supplementary Figure \ref{fig:gwas.clump.graph.eqtl}. As highlighted in bold, many clumps harbor known GWAS hits for hypertension  and contribute to many core genes (i.e. are “ peripheral master regulators” <!--- e.g. INSERT examples -->). 
 
 ## Association of mean arterial pressure with GATE scores for circulating proteins
 
-The GATE analysis based on circulating protein levels identified `r coregenes.pqtl.strict[, .N]` pGATE scores associated with `r phenoname` at $P<10^{-5}$, following filtering by the effective number of _trans_ pQTLs at least $20$. A more stringent criterion for effective number of _trans_ pQTLs was used to limit the data presentation to a reasonable size. In Table \ref{tab:coregenes.pqtls.strict}), the most strongly associated pGATE scores was for *IL17RB*.   For none of these `r coregenes.pqtl.strict[, .N]` genes was there any evidence of an association of *cis* scores in that gene with MAP. Of the `r coregenes.pqtl.strict[, .N]` putative core genes shown, `r coregenes.pqtl.strict[!is.na(reported.genes),.N]` had a prior GWAS hit within 200kb most of which could not be localised to any gene in the originating GWAS.
+The GATE analysis based on circulating protein levels identified `r coregenes.pqtl.strict[, .N]` pGATE scores associated with `r phenoname` at $P<10^{-5}$, following filtering by the effective number of _trans_ pQTLs at least $20$. A more stringent criterion for effective number of _trans_ pQTLs was used to limit the data presentation to a reasonable size. In Table \ref{tab:coregenes.pqtls.strict}, the most strongly associated pGATE scores was for *IL17RB*. For none of these `r coregenes.pqtl.strict[, .N]` genes was there any evidence of an association of *cis* scores in that gene with MAP. Of the `r coregenes.pqtl.strict[, .N]` putative core genes shown, `r coregenes.pqtl.strict[!is.na(reported.genes),.N]` had a prior GWAS hit within 200kb most of which could not be localised to any gene in the originating GWAS.
 
-As illustrated in Figure \ref{fig:corrplot.pqtls}, the GATE scores were relatively uncorrelated, suggesting that these genes are not linked by a shared biological pathway. This is consistent with the minimal sharing of _trans_ pQTLs observed between these genes (Supplementary Table \ref{tab:transpqtls}).
+As illustrated in Figure \ref{fig:corrplot.pqtls}, the GATE scores were relatively uncorrelated, suggesting that these genes are not linked by a shared biological pathway. This is consistent with the minimal sharing of _trans_ pQTLs observed between these genes (Supplementary Table \ref{tab:transpqtls} and Supplementary Figure \ref{fig:gwas.clump.graph.pqtl}).
 
 A full listing of all eGATE and pGATE scores (N=`r coregenes.pqtl[, .N]+coregenes.eqtl[, .N]`) that were associated with MAP at $P<10^{-5}$ but where the effective number of loci threshold is relaxed to $\ge5$ is available on request. Of the total of `r coregenes.pqtl[, .N]+coregenes.eqtl[, .N]` genes where eGATE or pGATE scores were associated with MAP at this threshold `r coregenes.eqtl[!is.na(reported.genes),.N]+coregenes.pqtl[!is.na(reported.genes),.N]` harbored a prior GWAS hit within 200kb most of which could not be localised in the originating GWAS. 
 
 ## Instrumental variable analysis for supportive evidence of causality (Mendelian randomization analysis)
 
-Supplementary Table \ref{tab:mrhevo} details the results of the MR analysis for putative core genes listed in Table \ref{tab:coregenes.eqtls.strict} and Table \ref{tab:coregenes.pqtls.strict}. We considered that an effective number of loci needs to be at least 20 for MR analysis to have power to demonstrate supportive evidence of causality for any putative core gene. None of the eGATE derived putative core genes had this number of effective loci, and of these only for _ABCA1_ was there a significant MR result at $P<0.01$. For the `r coregenes.pqtl.strict[, .N]` putative core genes based on pGATE scores in Table \ref{tab:coregenes.pqtls.strict}, by the filtering criterion all had an effective number of loci at least 20. Altogether `r all.evidence.tbl[mr.validated=="+"&source=="pQTL",.N]` of `r coregenes.pqtl.strict[, .N]` genes in Table \ref{tab:coregenes.pqtls.strict} had MR support for causality at $p<0.01$ ( i.e. marginalizing over pleiotropic effects supported a dose-response effect of the protein on MAP at $P < 0.01$).
+Supplementary Table \ref{tab:mrhevo} details the results of the MR analysis for putative core genes listed in Table \ref{tab:coregenes.eqtls.strict} and Table \ref{tab:coregenes.pqtls.strict}. We considered that an effective number of loci needs to be at least 20 for MR analysis to have power to demonstrate supportive evidence of causality for any putative core gene. None of the eGATE derived putative core genes had this number of effective loci, and of these only for _ABCA1_ was there a significant MR result at $P<0.01$. For the `r coregenes.pqtl.strict[, .N]` putative core genes based on pGATE scores in Table \ref{tab:coregenes.pqtls.strict}, by the filtering criterion all had an effective number of loci at least 20. Altogether `r all.evidence.tbl[mr.validated=="+"&source=="pQTL",.N]` of `r coregenes.pqtl.strict[, .N]` genes in Table \ref{tab:coregenes.pqtls.strict} had MR support for causality at $p<0.01$ (i.e. marginalizing over pleiotropic effects supported a dose-response effect of the protein on MAP at $P < 0.01$).
 
 Figure \ref{fig:mrpqtl} displays the _trans_ pQTL-disease associations plotted against the _trans_ pQTL-transcript associations for the top 6 genes with MR support for causality: _IL17RB_, _CECAM16_, _PTPRF_, _CKB_, _TCL1A_ and _CNTN3_.
 
 ## Other Supportive Evidence for the Role of Putative Core Proteins for MAP
 
 In addition, Table \ref{tab:evidence} summarizes for each putative core gene the results of the prespecified criteria other than *trans* QTL effects that support causality of the gene for MAP.  In addition to `r all.evidence.tbl[gwas.validated=="+",.N]` genes having known GWAS hits or *cis* associations, `r all.evidence.tbl[mr.validated=="+",.N]` having significant MR support we note that 
-1. Core genes have previously been reported to harbor variants for monogenic forms of disease that could affect blood pressure: *ABCA1*<!--- (Tangier Disease - severe HDL deficiency that may lead to atherosclerosis [@rhyneMultipleSpliceDefects2009])-->,  *ADIPOQ*<!--- (diabetes [@simeoneDominantNegativeADIPOQ2022])-->, *DSG2*<!--- (arrhythmogenic cardiomyopathy[@rouillonSerumProteomicProfiling2015])-->, *ELANE*<!--- (cyclic and congenital neutropenia [@tidwellNeutropeniaassociatedELANEMutations2014])--> and *EDA2R*<!--- (X-linked ectodermal dysplasia [@arringtonRolesEDA2RAgeing2025])-->. 
-2. For `r all.evidence.tbl[protein.validated=="+"|protein.validated=="-",.N]` of the core genes, measured levels of the proteins encoded by these genes in the UKB-PPP study showed associations with MAP at $P < 10^{-4}$ in Table \ref{tab:evidence}. The directions of these associations with MAP were consistent with the GATE analysis for `r all.evidence.tbl[protein.validated=="+",.N]` core genes.
-3. For `r all.evidence.tbl[model.validated=="+",.N]` of the core genes, we identified supportive evidence for a causal relationship based on perturbation in a mouse model of hypertension. For xx genes (TODO:LIST them) the directions of effect of the genetically predicted levels of gene expression (for eGATE scores) or protein levels (for pGATE scores) on MAP in the GATE analysis are the same as that expected from animal models. For xx genes (TODO:LIST THESE) their directions of effect in the GATE analysis are the opposite to that expected from animal models.
-4. For one gene the proteins encoded by these genes or other proteins in the known pathway these proteins are involved in are in drug development for conditions that affect blood pressure: *TREM1*<!---  (septic shock - hypotension [@francoisProspectiveEvaluationEfficacy2023]) (TODO: REFERENCE supplementary table for further details)-->. 
+
+1. Core genes have previously been reported to harbor variants for monogenic forms of disease that could affect blood pressure: *ABCA1*[@rhyneMultipleSpliceDefects2009] (Tangier disease)<!---  - severe HDL deficiency that may lead to atherosclerosis)-->,  *ADIPOQ*[@simeoneDominantNegativeADIPOQ2022] (diabetes and end-stage renal disease), *DSG2*[@rouillonSerumProteomicProfiling2015] (arrhythmogenic cardiomyopathy), *ELANE*[@tidwellNeutropeniaassociatedELANEMutations2014] (cyclic and congenital neutropenia) and *EDA2R*[@farringtonRolesEDA2RAgeing2025] (X-linked ectodermal dysplasia).
+
+2. For `r all.evidence.tbl[protein.validated=="+"|protein.validated=="-",.N]` of the core genes, measured levels of the proteins encoded by these genes in the UKB-PPP study showed associations with MAP at $P < 10^{-4}$ in Table \ref{tab:evidence}. The directions of these associations with MAP were consistent with the GATE analysis for `r all.evidence.tbl[protein.validated=="+",.N]` core genes (Supplementary Table \ref{tab:proteins.core} and Supplementary Figure \ref{fig:protein.gate.scatter}).
+
+3. For `r all.evidence.tbl[model.validated=="+",.N]` of the core genes, we identified supportive evidence for a causal relationship based on perturbation in a mouse model of hypertension. For 5 genes (_TP53INP2_[@liuMetabolicStatusDifferentiates2023a], _IRAG1_[@biswasIRAG1DeficientMice2020], _RTN1_[@fanRTN1MediatesProgression2015], _CD300LG_[@stoyReducedCD300LGMRNA2015], and _IGFBP2_[@slaterBS52EffectsIGFBP22019]) the directions of effect of the genetically predicted levels of gene expression (for eGATE scores) or protein levels (for pGATE scores) on MAP in the GATE analysis are the same as that expected from animal models. Higher predicted levels of _IRAG1_, _TP53INP2_, _CD300LG_, and _IGFBP2_ associate with lower MAP (negative slope), consistent with their protective roles in animal hypertension models, while higher predicted levels of _RTN1_ associate with higher MAP (positive slope), in line with its pro-hypertensive renal role. For 2 genes (_IL17RB_[@davisInterleukin17AKey2021a] and _CKB_[@karamatCreatineKinaseInhibition2016]) their directions of effect in the GATE analysis are the opposite to that expected from animal models. _IL17RB_ shows a negative GATE slope, yet _IL-17A_ knock out blunts angiotensin II-induced hypertension in mice, implying higher _IL-17_ signalling raises blood pressure; _CKB_ similarly shows a negative GATE slope whereas CK inhibition lowers blood pressure in spontaneously hypertensive rats.
+
+4. For one gene the proteins encoded by these genes or other proteins in the known pathway these proteins are involved in are in drug development for conditions that affect blood pressure: *TREM1*[@francoisProspectiveEvaluationEfficacy2023] (septic shock). 
 
 
 # Discussion
@@ -270,7 +273,7 @@ A possible mechanism by which altered lipid handling in vascular endothelial cel
 * _COBLL1_ -- ligand for ROR1 receptor         
 Common variant affects metabolically obese normal weight phenotype by reducing ability of subcutaneous adipocytes to store fat.  also expressed in Renal epithelial cells - Ion transport and pH regulation (mainly)
 
-* _ABCA1_
+<!---* _ABCA1_ -->
 
 
 ## Relation to other work
@@ -304,9 +307,10 @@ Genetic and transcriptomic data converge on a similar picture of immune-driven h
 The present GATE analysis prioritises a set of core genes that are enriched for immune functions, including cytokines, inflammasome components and co-stimulatory molecules involved in T cell activation, cytotoxic effector function and antigen presentation. By converging on immune-related core genes from a purely genetic perspective, GATE provides orthogonal support for the central role of immune dysregulation in hypertension and offers a genetically anchored framework for prioritising immune pathways as potential therapeutic targets.
 
 # Acknowledgements
+We thank all study participants and the medical and administrative staff involved in participant recruitment, sample collection, and data management, whose contributions were essential to the delivery of this work.
 
 # Sources of funding
-SB and AI were supported by MRC Cross-Disciplinary fellowships: add more
+The development of the GENOSCORES platform was funded by a Springboard Award (SBF006/1109) from the Academy of Medical Sciences, with support from the Wellcome Trust, the UK Government Department of Business, Energy and Industrial Strategy, the British Heart Foundation, and Diabetes UK. S.B. and A.I. were supported by the Medical Research Council Cross-Disciplinary Fellowship (XDF) Programme (MC_FE_00035). A.S. is supported by a Versus Arthritis Career Development Fellowship (23270). H.C. is supported by an endowed chair from the AXA Research Fund. This research has been conducted using the UK Biobank Resource under application number 23652.
 
 # Disclosures
 No potential conflicts of interest relevant to this article were reported.
@@ -373,7 +377,7 @@ if (params$output_format == "pdf") {
                      "\\\\textit{trans} score"=3,
                      "\\\\textit{cis} score"=2, " "=1), escape=FALSE) %>%
   kable_styling(latex_options=c("HOLD_position", "repeat_header")) -> .tbl_T1
-sub("\\end{longtable}", paste0("\\end{longtable}\n\\par\\noindent{\\footnotesize Chr, chromosome; Mb, megabase; $\\beta$, regression coefficient representing the change in MAP (mmHg) per SD increase in the eGATE score. For the analysis 212,569 individuals were included. Reported GWAS hits for essential hypertension are those falling within 200 kb of the transcription start site; (+) indicates that the SNP has not been attributed to a specific gene.}\n"), as.character(.tbl_T1), fixed=TRUE) |> knitr::asis_output()
+sub("\\end{longtable}", paste0("\\end{longtable}\n\\par\\noindent{\\footnotesize Chr, chromosome; Mb, megabase; Slope, regression coefficient representing the change in MAP (mmHg) per SD increase in the eGATE score. For the analysis 212,569 individuals were included. Reported GWAS hits for essential hypertension are those falling within 200 kb of the transcription start site; (+) indicates that the SNP has not been attributed to a specific gene.}\n"), as.character(.tbl_T1), fixed=TRUE) |> knitr::asis_output()
 } else {
   ## Excel/Word output using flextable
   flextable(table.data[, `:=`(p_cis_formatted=NULL, p_trans_formatted=NULL)]) %>%
@@ -454,7 +458,7 @@ if (params$output_format == "pdf") {
                          "Slope",
                          "$P$ value",
                          "Reported GWAS hit"),
-             caption=("Putative core genes were defined by an association $P < 10^{-6}$ and minimum of twenty effective \\textit{trans} pQTLs contributing to the pGATE score."),
+             caption=("Putative core genes were defined by an association $P < 10^{-5}$ and minimum of twenty effective \\textit{trans} pQTLs contributing to the pGATE score."),
              label="coregenes.pqtls.strict")  %>%
   column_spec(1, width="0.7cm") %>%
   column_spec(2, italic=TRUE) %>%
@@ -470,7 +474,7 @@ if (params$output_format == "pdf") {
                      "\\\\textit{trans} score"=3,
                      "\\\\textit{cis} score"=2, " "=1), escape=FALSE) %>%
   kable_styling(latex_options=c("HOLD_position", "repeat_header"), font_size=9) -> .tbl_T2
-sub("\\end{longtable}", paste0("\\end{longtable}\n\\par\\noindent{\\footnotesize DeC, deCODE study; UKB, UK Biobank Pharma Proteomics Project; Chr, chromosome; Mb, megabase; $\\beta$, regression coefficient representing the change in MAP (mmHg) per SD increase in the pGATE score. For DeCODE pQTLs the analysis is based on 212,569 individuals in UKBB.  For UKB pQTLs the analysis is based on  190,635 individuals as individuals who were in the proteomics sub-study excluded. Reported GWAS hits for essential hypertension are SNPs within 200 kb of the transcription start site; (+) indicates that the SNP has not been attributed to a specific gene. Where multiple pGATE scores exist for a given protein, only the score with the strongest association ($P < 10^{-6}$) is reported.}\n"), as.character(.tbl_T2), fixed=TRUE) |> knitr::asis_output()
+sub("\\end{longtable}", paste0("\\end{longtable}\n\\par\\noindent{\\footnotesize DeC, deCODE study; UKB, UK Biobank Pharma Proteomics Project; Chr, chromosome; Mb, megabase; Slope, regression coefficient representing the change in MAP (mmHg) per SD increase in the pGATE score. For DeCODE pQTLs the analysis is based on 212,569 individuals in UKBB.  For UKB pQTLs the analysis is based on  190,635 individuals as individuals who were in the proteomics sub-study excluded. Reported GWAS hits for essential hypertension are SNPs within 200 kb of the transcription start site; (+) indicates that the SNP has not been attributed to a specific gene. Where multiple pGATE scores exist for a given protein, only the score with the strongest association ($P < 10^{-5}$) is reported.}\n"), as.character(.tbl_T2), fixed=TRUE) |> knitr::asis_output()
 } else {
   ## Excel/Word output using flextable
   flextable(table.data[, `:=`(p_cis_formatted=NULL, p_trans_formatted=NULL)]) %>%
@@ -519,7 +523,16 @@ pqtl.end <- all.evidence.tbl[, .N]
 xls.tbl <- all.evidence.tbl[, .(gene_symbol, gwas.validated, mr.validated, monogenic.cause, protein.validated,
                                 model.validated, drug.validated)]
 write_xlsx(xls.tbl, "table2.xlsx")
-knitr::kable(xls.tbl,
+# Escape +, -, ., 0 in cells so they are not interpreted as footnote markers (e.g. by threeparttable)
+xls.tbl.latex <- copy(xls.tbl)
+sym_cols <- c("gwas.validated", "mr.validated", "monogenic.cause", "protein.validated", "model.validated", "drug.validated")
+for (j in sym_cols) {
+  xls.tbl.latex[[j]] <- gsub("^\\+$", "\\\\texttt{+}", xls.tbl.latex[[j]])
+  xls.tbl.latex[[j]] <- gsub("^-$", "\\\\texttt{-}", xls.tbl.latex[[j]])
+  xls.tbl.latex[[j]] <- gsub("^\\.$", "\\\\texttt{.}", xls.tbl.latex[[j]])
+  xls.tbl.latex[[j]] <- gsub("^0$", "\\\\texttt{0}", xls.tbl.latex[[j]])
+}
+knitr::kable(xls.tbl.latex,
              escape=FALSE,
              booktabs=TRUE,
              longtable=FALSE,
@@ -548,11 +561,11 @@ knitr::kable(xls.tbl,
              kable_styling(font_size=8,
                           latex_options=c("HOLD_position")) -> .tbl_evidence
 .note_lines <- c(
-  "'+' indicates that the criterion is met; '\u2014' indicates that it is not; '.' data is missing.",
+  "Symbols: \\texttt{+} indicates that the criterion is met; \\texttt{--} indicates that it is not; \\texttt{.} data is missing.",
   "(a) Association with essential hypertension reported for SNP within 200 kb, or  \\textit{cis}-score for the gene is associated with MAP ($P<0.001$).",
-  "(b) Mendelian randomization analysis based on \\textit{trans}-QTLs supports a causal effect  at $P<0.01$",
-  "(c) Rare variants in the gene cause monogenic hypertension",
-  "(d) Association of MAP with measured protein levels in UKB-PPP: '+' indicates association at $P < 10^{-4}$ with effect direction consistent with GATE score effect on MAP; '-' indicates opposite direction; '0' indicates no association.",
+  "(b) Mendelian randomization analysis based on \\textit{trans}-QTLs supports a causal effect at $P<0.01$ and effective number of eQTLs/pQTLs $\\ge 20$.",
+  "(c) Rare variants in the gene cause monogenic form of the blood pressure-related diseases.",
+  "(d) Association of MAP with measured protein levels in UKB-PPP: \\texttt{+} indicates association at $P < 10^{-4}$ with effect direction consistent with GATE score effect on MAP; \\texttt{-} indicates opposite direction; \\texttt{0} indicates no association.",
   "(e) Perturbation of the gene in an experimental model alters blood pressure",
   "(f) Drug that targets the protein encoded by the gene or its ligand/receptor alters blood pressure in humans."
 )
@@ -577,14 +590,8 @@ Left (inputs): summary-level eQTL and pQTL GWAS results together with individual
 **Fig 2. Heatmap of pairwise correlations among eGATE scores for putative core transcripts in MAP, arranged by hierarchical clustering.**
 Our reporting criteria for putative core genes were strength of association ($P < 10^{-5}$) with at least eight effective *trans* eQTLs contributing to the eGATE score. Two distinct clusters emerge: a block of highly correlated scores is evident, containing a subcluster of B-cell-related genes; the broader block comprises genes predominantly involved in immune pathways.
 
-**Fig 3. Bipartite graph of *trans*-eQTL clumps containing GWAS hits for blood pressure or hypertension and their target genes from Table 1.**
-Square nodes (top) represent *trans*-eQTL clumps labelled by chromosome and reported GWAS gene(s); circular nodes (bottom) represent target core genes sized by $-\log_{10}(P)$ for association of the eGATE score with MAP and coloured by direction of effect. Only genes connected to two or more GWAS-hit clumps are shown.
-
-**Fig 4. Heatmap of pairwise correlations among pGATE scores for putative core proteins in MAP, arranged by hierarchical clustering.**
-Our reporting criteria for putative core genes were strength of association ($P < 10^{-6}$) with at least twenty effective *trans* pQTLs contributing to the pGATE score. The pGATE scores were largely independent of one another, indicating that the corresponding genes do not converge on a common biological pathway.
-
-**Fig 5. Bipartite graph of *trans*-pQTL clumps containing GWAS hits for blood pressure or hypertension and their target genes from Table 2.**
-Square nodes (top) represent *trans*-pQTL clumps labelled by chromosome and reported GWAS gene(s); circular nodes (bottom) represent target core genes sized by $-\log_{10}(P)$ for association of the pGATE score with MAP and coloured by direction of effect. Only genes connected to two or more GWAS-hit clumps are shown.
+**Fig 3. Heatmap of pairwise correlations among pGATE scores for putative core proteins in MAP, arranged by hierarchical clustering.**
+Our reporting criteria for putative core genes were strength of association ($P < 10^{-5}$) with at least twenty effective *trans* pQTLs contributing to the pGATE score. The pGATE scores were largely independent of one another, indicating that the corresponding genes do not converge on a common biological pathway.
 
 \newpage
 
@@ -606,53 +613,10 @@ knitr::include_graphics(file.path(working.dir, "eqtl/eqtl_hits_correlation.png")
 
 \newpage
 
-
-```{r gwas.clump.graph.eqtl, echo=FALSE, fig.width=6.2, fig.height=5.5, fig.cap="\\label{fig:gwas.clump.graph.eqtl}Bipartite graph of \\textit{trans}-eQTL clumps containing GWAS hits for blood pressure or hypertension and their target genes from Table 1. Square nodes (top) represent \\textit{trans}-eQTL clumps labelled by chromosome and reported GWAS gene(s); circular nodes (bottom) represent target core genes sized by $-\\log_{10}(P)$ for association of the eGATE score with MAP and coloured by direction of effect. Only genes connected to two or more GWAS-hit clumps are shown."}
-
-source("graph_utils.R")
-.gwas_graph_dt <- gwas.dt[as.numeric(`P-VALUE`) < 5e-8 & !is.na(CHR_POS),
-                           .(chrom = as.character(CHR_ID),
-                             position = as.numeric(CHR_POS),
-                             reported_genes = `REPORTED GENE(S)`)]
-plot_clump_target_graph(
-    clumps_dt  = clumpseqtl.print,
-    gwas_dt    = .gwas_graph_dt,
-    coregenes_dt = coregenes.eqtl,
-    min_gwas_clumps = 2
-)
-
-```
-
-\newpage
-
 ```{r corrplot.pqtls, echo=FALSE, out.width='100%', fig.cap="\\label{fig:corrplot.pqtls} Heatmap of pairwise correlations among pGATE scores for putative core proteins in MAP, arranged by hierarchical clustering. Our reporting criteria for putative core genes were strength of association ($P < 10^{-6}$) with at least twenty effective \\textit{trans} pQTLs contributing to the pGATE score. The pGATE scores were largely independent of one another, indicating that the corresponding genes do not converge on a common biological pathway."}
 
 knitr::include_graphics(file.path(working.dir, "pqtl/pqtl_hits_correlation.png"))
 
-```
-
-\newpage
-
-```{=latex}
-\begin{adjustwidth}{-2cm}{-2cm}
-```
-
-```{r gwas.clump.graph.pqtl, echo=FALSE, out.width='100%', fig.pos='H', fig.cap="\\label{fig:gwas.clump.graph.pqtl}Bipartite graph of \\textit{trans}-pQTL clumps containing GWAS hits for blood pressure or hypertension and their target genes from Table 2. Square nodes (top) represent \\textit{trans}-pQTL clumps labelled by chromosome and reported GWAS gene(s); circular nodes (bottom) represent target core genes sized by $-\\log_{10}(P)$ for association of the pGATE score with MAP and coloured by direction of effect. Only genes connected to two or more GWAS-hit clumps are shown."}
-
-plot_clump_target_graph(
-    clumps_dt  = clumpspqtl.print,
-    gwas_dt    = .gwas_graph_dt,
-    coregenes_dt = coregenes.pqtl,
-    min_gwas_clumps = 2,
-    label_size = 3.5,
-    count_size = 3.5,
-    legend_text_size = 12
-)
-
-```
-
-```{=latex}
-\end{adjustwidth}
 ```
 
 \beginsupplement
@@ -686,270 +650,150 @@ GATE scores typically explain only a small proportion of the variance in measure
 
 For genes discovered through _trans_ effects, we sought orthogonal validation by assessing evidence from rare coding variation. It has been previously demonstrated that genes targeted by _trans_ QTLs associated with GWAS loci are enriched for rare variants of large effect [@bakker_identification_2024]. Accordingly, we queried two comprehensive public resources of gene-based rare-variant association statistics: Genebass (app.genebass.org) and the AstraZeneca PheWAS portal (azphewas.com). These platforms report results from SKAT-O and related collapsing or burden tests across a wide range of clinical outcomes in exome-sequenced UK Biobank participants. We systematically examined gene-level associations with clinical phenotypes to determine whether the direction and nature of the rare-variant burden signals were concordant with the effects predicted by the GATE analysis.
 
-## Drug Targets (put into table)
-**TREM1** [@francoisProspectiveEvaluationEfficacy2023]
-* Drug: Nangibotide (inotrem)
-* Disease tested: Septic shock (Phase 2b ASTONISH trial completed, Phase 3 ACCURATE trial actively enrolling)​ [@francoisRationaleProtocolEfficacy2021].
-* Blood pressure effect: In septic shock patients, the condition itself presents with vasopressor-dependent hypotension. Nangibotide demonstrated significant improvement in Sequential Organ Failure Assessment (SOFA) scores at day 5 in patients with high baseline sTREM-1 levels (approximately 50% of septic shock patients). While the drug addresses sepsis-related organ dysfunction including cardiovascular collapse, specific quantitative blood pressure effects are not directly reported as the primary focus was multi-organ function improvement [@francoisRationaleProtocolEfficacy2021].​​
-* Cardiovascular context: TREM1 is also implicated in cardiovascular disease—elevated sTREM1 predicts mortality in acute myocardial infarction patients, and TREM1 inhibition in animal models improved cardiac function and reduced inflammatory injury [@xueRoleTREMReceptor2025]. 
-
-**IL-17RB** [@davisInterleukin17AKey2021]
-   * Drug name: SM17
-   * Disease tested: Atopic dermatitis
-   * Blood pressure effect: Not reported
-
-- **ABCA1**: CS-6253 (Phase 2, Alzheimer's) - pleiotropic cardiovascular effects possible [@choiBiomedicalAdvancesABCA12023]
-- **GPBAR1/TGR5**: INT-777 (Phase 1, T2DM/NAFLD) - metabolic-BP connections [@heTakedaProteinCoupled2025]
-
-\newpage
-
-## Supplementary Figures
-
-<!-- ```{r mrpqtl, echo=FALSE, out.width='100%', fig.cap="\\label{fig:mrpqtl} Mendelian randomisation analysis of the effect of the putative
-core proteins on MAP in UKB-PPP."}
-
-knitr::include_graphics("figures/mrpqtl.png")
-
-``` -->
-
-```{r mrpqtl, echo=FALSE, out.width='100%', fig.cap="\\label{fig:mrpqtl} Mendelian randomisation analysis of the effect of the putative core proteins on MAP in UKB-PPP. All trans-pQTLs contributing to the pGATE score of the putative core proteins are used as genetic instrumens. The effects of the genetic instrument on protein level and MAP are shown on the x-axis and y-axis, respectively. The size of each point is inversely proportional to the standard error of the ratio estimator. The slope of the straight line represents the maximum likelihood estimate of the causal effect parameter while the shaded ribbon reflects one standard error above and below this maximum likelihood estimate."}
-knitr::include_graphics('figures/mrpqtl.png')
-
-```
-
-<!--All trans-pQTLs contributing to the
-pGATE score of the putative core proteins are used as genetic instrumens. The effects of the
-genetic instrument on protein level and MAP are shown on the x-axis and y-axis,
-respectively. The size of each point is inversely proportional to the standard error of the ratio
-estimator. The slope of the straight line represents the maximum likelihood estimate of the
-causal effect parameter while the shaded ribbon reflects one standard error above and below
-this maximum likelihood estimate. -->
-
-```{r protein.gate.scatter, echo=FALSE, fig.width=6, fig.height=5.5, fig.cap="\\label{fig:protein.gate.scatter} Scatter plot comparing the regression coefficient for the association of MAP with the pGATE score (x-axis) against the regression coefficient for the association of MAP with the measured protein level (y-axis) for putative core genes. Colours indicate the pQTL study used to derive the pGATE score (deCODE or UKB-PPP). Gene symbols label each point. Only genes with available protein-level association data are shown."}
-
-library(ggplot2)
-.sc <- copy(coeffs.protein.core.joined)
-.sc <- .sc[study != "eQTLGen"]
-.sc[, protein_coeff := suppressWarnings(as.numeric(coeff))]
-.sc[, gate_coeff    := ifelse(is.na(gw.variance), NA_real_,
-                               estimate_trans * sqrt(gw.variance))]
-.sc <- .sc[!is.na(protein_coeff) & !is.na(gate_coeff)]
-.sc[, study_label := fcase(study == "DeC", "deCODE",
-                            study == "UKB", "UKB-PPP",
-                            default = study)]
-
-ggplot(.sc, aes(x = gate_coeff, y = protein_coeff,
-                colour = study_label)) +
-  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey70") +
-  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey70") +
-  geom_point(size = 3, alpha = 0.85, shape = 16) +
-  geom_text(aes(label = Gene), size = 2.3, vjust = -0.75,
-            fontface = "italic", show.legend = FALSE) +
-  scale_colour_manual(name = "QTL study",
-                      values = c("deCODE"  = "steelblue",
-                                 "UKB-PPP" = "firebrick")) +
-  labs(x = "pGATE score slope (mmHg per SD)",
-       y = "Protein level slope (mmHg per SD)") +
-  theme_bw(base_size = 10) +
-  theme(legend.position = "right")
-
-```
-
 \newpage
 
 ## Supplementary Tables
 
-```{r coregenes.eqtls, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+```{r transeqtls, echo=FALSE, warning=FALSE, message=FALSE}
 
-coregenes.eqtl.rest[, gene_startpos := as.integer(gene_startpos)]
-coregenes.eqtl.rest[, estimate_cis := as.numeric(estimate_cis)]
-coregenes.eqtl.rest[, gene_startpos := as.integer(gene_startpos)]
-coregenes.eqtl.rest[, gene_endpos := as.integer(gene_endpos)]
-coregenes.eqtl.rest[,
-  gene_chrom_fctr := factor(gene_chrom,
-                            levels=c(as.character(1:22), "X", "Y"))]
+## Filter to clumps whose target genes include at least one strict eQTL core gene (Table 1)
+.core_genes_eqtl_strict <- coregenes.eqtl.strict$gene_symbol
+clumpseqtl.print <- clumpseqtl.print[sapply(targetgenes, function(tg) {
+  any(trimws(strsplit(tg, ",\\s*")[[1]]) %in% .core_genes_eqtl_strict)
+})]
 
-table.data <- coregenes.eqtl.rest[order(pvalue_trans),
-                   .(gene_symbol, gene_chrom,
-                    gene_pos=round(as.integer(gene_startpos) * 1E-6, 2),
-                    diversity=round(locus.diversity, 1),
-                    logor_trans=ifelse(is.na(gw.variance),
-                                paste0("(", round(estimate_trans, 3), ")"),
-                                round(estimate_trans * sqrt(gw.variance), 3)),
-                    p_trans=pvalue_trans,
-                    p_trans_formatted=format.z.aspvalue(z_trans),
-                    logor_cis=round(estimate_cis * sqrt(cis.variance), 3),
-                    p_cis=pvalue_cis,
-                    p_cis_formatted=format.z.aspvalue(z_cis),
-                    GWAS.hit=reported.genes)]
+## Bold columns 3 & 4 if a GWAS hit falls within 200 kb of the clump
+## Use per-chromosome startpos/endpos (bp) rather than absolute x.clumpStart/End
+.gwas.use <- gwas.hits[!is.na(startpos) & !is.na(endpos)]
 
-table.data[, GWAS.hit := format_gwas_hit(GWAS.hit, latex = (params$output_format == "pdf"))]
+## Helper: return GWAS-attributed gene symbols for a clump window
+.get_gwas_genes <- function(chr, lo, hi) {
+  hits <- .gwas.use[chrom == chr & endpos >= lo & startpos <= hi]
+  if (nrow(hits) == 0) return(character(0))
+  genes <- trimws(unlist(strsplit(hits$reported.genes, ",")))
+  unique(genes[genes != "NR" & genes != ""])
+}
 
-## render based on output format parameter
-if (params$output_format == "pdf") {
-  knitr::kable(table.data[, `:=`(p_cis=NULL, p_trans=NULL)],
+## Build per-row GWAS gene lists
+.eqtl.gwas_genes <- lapply(seq_len(nrow(clumpseqtl.print)), function(i) {
+  chr <- as.character(clumpseqtl.print$chrom[i])
+  lo  <- clumpseqtl.print$start[i] * 1e6 - 2e5
+  hi  <- clumpseqtl.print$stop[i]  * 1e6 + 2e5
+  .get_gwas_genes(chr, lo, hi)
+})
+.eqtl.has.gwas <- sapply(.eqtl.gwas_genes, length) > 0
+
+## Format nearby_genes: bold+italic for GWAS-attributed genes, italic for others
+clumpseqtl.fmt <- copy(clumpseqtl.print)
+clumpseqtl.fmt$nearby_genes <- sapply(seq_len(nrow(clumpseqtl.fmt)), function(i) {
+  gwas_genes <- .eqtl.gwas_genes[[i]]
+  nearby <- trimws(strsplit(as.character(clumpseqtl.fmt$nearby_genes[i]), ",")[[1]])
+  nearby <- nearby[nearby != "" & nearby != "."]
+  if (length(nearby) == 0) return("")
+  if (length(gwas_genes) > 0) {
+    ifelse(nearby %in% gwas_genes,
+           paste0("\\textbf{\\textit{", nearby, "}}"),
+           paste0("\\textit{", nearby, "}"))
+  } else {
+    paste0("\\textit{", nearby, "}")
+  } |> paste(collapse=", ")
+})
+
+knitr::kable(clumpseqtl.fmt,
              escape=FALSE,
              booktabs=TRUE,
              longtable=TRUE,
-             col.names=c("Gene", "Chr", "Start position (Mb)",
-                         "Effective number of \\textit{trans} eQTLs",
-                         "Slope",
-                         "$P$ value",
-                         "Slope",
-                         "$P$ value",
-                         "Reported GWAS hit"),
-             caption=("Additional putative core genes defined by an association $P < 10^{-5}$ and effective \\textit{trans} eQTLs contributing to the eGATE score not less than five but less than eight."),
-             label="coregenes.eqtls") %>%
-  column_spec(1, italic=TRUE) %>%
-  column_spec(2, width = "0.6cm") %>%
-  column_spec(3, width = "1cm") %>%
-  column_spec(4, width = "1.5cm") %>%
-  column_spec(5, width = "1.25cm") %>%
-  column_spec(6, width = "1.5cm") %>%
-  column_spec(7, width = "1.25cm") %>%
-  column_spec(8, width = "1.2cm") %>%
-  column_spec(9, width = "1cm", bold=TRUE) %>%
-  add_header_above(c(" "=1, "Transcription site"=2,
-                     "\\\\textit{trans} score"=3,
-                     "\\\\textit{cis} score"=2, " "=1), escape=FALSE) %>%
-  kable_styling(latex_options=c("HOLD_position", "repeat_header")) -> .tbl_S1
-sub("\\end{longtable}", paste0("\\end{longtable}\n\\par\\noindent{\\footnotesize Chr, chromosome; Mb, megabase; $\\beta$, regression coefficient representing the change in MAP (mmHg) per SD increase in the eGATE score. For the analysis 212,569 individuals were included. Reported GWAS hits for essential hypertension are those falling within 200 kb of the transcription start site; NR indicates that the SNP has not been attributed to a specific gene.}\n"), as.character(.tbl_S1), fixed=TRUE) |> knitr::asis_output()
-} else {
-  ## Excel/Word output using flextable
-  flextable(table.data[, `:=`(p_cis_formatted=NULL, p_trans_formatted=NULL)]) %>%
-  theme_vanilla() %>%  # Apply theme immediately after flextable()
-  set_header_labels(
-    gene_symbol = "Gene",
-    gene_chrom = "Chrom",
-    gene_pos = "Start position (Mb)",
-    diversity = "Effective number of trans eQTLs",
-    logor_trans = "Log OR (trans)",
-    p_trans = "P-value (trans)",
-    logor_cis = "Log OR (cis)",
-    p_cis = "P-value (cis)",
-    GWAS.hit = "Reported GWAS hit"
-  ) %>%
-  flextable::italic(j = 1) %>%
-  flextable::bold(j = 9) %>%
-  fontsize(size = 8) %>%  # Smaller for Word
-    width(j = 1, width = 0.7) %>%
-    width(j = 2, width = 0.5) %>%
-    width(j = 3, width = 0.6) %>%
-    width(j = 4, width = 1) %>%
-    width(j = 5, width = 0.8) %>%
-    width(j = 6, width = 0.8) %>%
-    width(j = 7, width = 0.7) %>%
-    width(j = 8, width = 0.7) %>%
-    width(j = 9, width = 0.7) %>%
-    align(align = "center", j = c(2, 3, 4, 5), part = "body") %>%
-    align(align = "center", part = "header") %>%
-  set_caption(
-    caption = "Putative core genes identified through aggregated trans eQTL scores."
-  )
-}
+             col.names=c("\\textit{Trans} eQTL clump", "Chrom",
+                         "Clump start position (Mb)",
+                         "Clump end position (Mb)",
+                         "Target genes",
+                         "Genes in or near \\textit{trans} eQTL clump"),
+             caption="\\textit{Trans} eQTLs for genes identified as putative core genes in Table \\ref{tab:coregenes.eqtls.strict}",
+             label="transeqtls")  %>%
+  footnote(general_title="",
+           threeparttable=TRUE,
+           footnote_as_chunk = TRUE,
+           general=paste("In the clumps of \\textit{trans} eQTLs, genes attributed to a GWAS hit within 200 kb are shown in bold italic; other nearby genes are shown in italic. Clump start and end positions are shown in bold when a GWAS hit falls within 200 kb."),
+           escape=FALSE) %>%
+  column_spec(1, width = "1cm") %>%
+  column_spec(2, width = "1cm") %>%
+  column_spec(3, width = "1.5cm", bold = .eqtl.has.gwas) %>%
+  column_spec(4, width = "1.5cm", bold = .eqtl.has.gwas) %>%
+  column_spec(5, width = "5cm", italic=TRUE) %>%
+  column_spec(6, width = "6cm") %>%
+    kable_styling(latex_options=c("HOLD_position"), font_size=8) |>
+  as.character() |> (\(x) gsub("}[ \t]+,", "},", x))() |>
+  knitr::asis_output()
 
 ```
 
 \newpage
 
-```{r coregenes.pqtls, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
-options(warn=0)
-coregenes.pqtl.rest[, gene_startpos := as.integer(gene_startpos)]
-coregenes.pqtl.rest[, estimate_cis := as.numeric(estimate_cis)]
-coregenes.pqtl.rest[, gene_startpos := as.integer(gene_startpos)]
-coregenes.pqtl.rest[, gene_endpos := as.integer(gene_endpos)]
 
-coregenes.pqtl.rest[,
-  gene_chrom_fctr := factor(gene_chrom,
-                            levels=c(as.character(1:22), "X", "Y"))]
+```{r transpqtls, echo=FALSE, warning=FALSE, message=FALSE}
 
-table.data <- coregenes.pqtl.rest[order(pvalue_trans),
-                 .(study=car::recode(studyid,
-                                     "21='FIN'; 31='IMP'; 26='INT'; 1008='DeC'; 50='UKB'"),
-                  gene_symbol, gene_chrom,
-                  gene_pos=ifelse(!is.na(gene_startpos),
-                                round(as.integer(gene_startpos) * 1E-6, 2), NA),
-                  diversity=round(locus.diversity, 1),
-                  logor_trans=round(estimate_trans * sqrt(gw.variance), 3),
-                  p_trans=pvalue_trans,
-                  p_trans_formatted=format.z.aspvalue(z_trans),
-                  logor_cis=round(estimate_cis * sqrt(cis.variance), 3),
-                  p_cis=pvalue_cis,
-                  p_cis_formatted=format.z.aspvalue(z_cis),
-                  GWAS.hit=reported.genes)]
+## Filter clumps to those whose target genes include at least one strict pQTL core gene (Table 2)
+.core_genes_pqtl <- coregenes.pqtl.strict$gene_symbol
+clumpspqtl.print <- clumpspqtl.print[sapply(targetgenes, function(tg) {
+  any(trimws(strsplit(tg, ",\\s*")[[1]]) %in% .core_genes_pqtl)
+})]
 
-table.data[, GWAS.hit := format_gwas_hit(GWAS.hit, latex = (params$output_format == "pdf"))]
+## Bold columns 3 & 4 if a GWAS hit falls within 200 kb of the clump
+## Build per-row GWAS gene lists
+.pqtl.gwas_genes <- lapply(seq_len(nrow(clumpspqtl.print)), function(i) {
+  chr <- as.character(clumpspqtl.print$chrom[i])
+  lo  <- clumpspqtl.print$start[i] * 1e6 - 2e5
+  hi  <- clumpspqtl.print$stop[i]  * 1e6 + 2e5
+  .get_gwas_genes(chr, lo, hi)
+})
+.pqtl.has.gwas <- sapply(.pqtl.gwas_genes, length) > 0
 
-## render based on output format parameter
-if (params$output_format == "pdf") {
-  knitr::kable(
-  table.data[, `:=`(p_trans=NULL, p_cis=NULL)],
+## Format nearby_genes: bold+italic for GWAS-attributed genes, italic for others
+clumpspqtl.fmt <- copy(clumpspqtl.print)
+clumpspqtl.fmt$nearby_genes <- sapply(seq_len(nrow(clumpspqtl.fmt)), function(i) {
+  gwas_genes <- .pqtl.gwas_genes[[i]]
+  nearby <- trimws(strsplit(as.character(clumpspqtl.fmt$nearby_genes[i]), ",")[[1]])
+  nearby <- nearby[nearby != "" & nearby != "."]
+  if (length(nearby) == 0) return("")
+  if (length(gwas_genes) > 0) {
+    ifelse(nearby %in% gwas_genes,
+           paste0("\\textbf{\\textit{", nearby, "}}"),
+           paste0("\\textit{", nearby, "}"))
+  } else {
+    paste0("\\textit{", nearby, "}")
+  } |> paste(collapse=", ")
+})
+
+knitr::kable(clumpspqtl.fmt,
              escape=FALSE,
              booktabs=TRUE,
              longtable=TRUE,
-             col.names=c("pQTL study", "Gene", "Chr", "Start position (Mb)",
-                         "Effective number of \\textit{trans} pQTLs",
-                         "Slope",
-                         "$P$ value",
-                         "Slope",
-                         "$P$ value",
-                         "Reported GWAS hit"),
-             caption=("Additional putative core genes defined by an association $P < 10^{-6}$ and effective \\textit{trans} pQTLs contributing to the pGATE score not less than five but less than twenty."),
-             label="coregenes.pqtls")  %>%
-  column_spec(1, width="0.7cm") %>%
-  column_spec(2, italic=TRUE) %>%
-  column_spec(3, width = "0.6cm") %>%
-  column_spec(4, width = "1cm") %>%
-  column_spec(5, width = "1.1cm") %>%
-  column_spec(6, width = "1.25cm") %>%
-  column_spec(7, width = "1.25cm") %>%
-  column_spec(8, width = "1.25cm") %>%
-  column_spec(9, width = "1.1cm") %>%
-  column_spec(10, width = "1cm", bold=TRUE) %>%
-  add_header_above(c(" "=2, "Transcription site"=2,
-                     "\\\\textit{trans} score"=3,
-                     "\\\\textit{cis} score"=2, " "=1), escape=FALSE) %>%
-  kable_styling(latex_options=c("HOLD_position", "repeat_header"), font_size=9) -> .tbl_S2
-sub("\\end{longtable}", paste0("\\end{longtable}\n\\par\\noindent{\\footnotesize DeC, deCODE study; UKB, UK Biobank Pharma Proteomics Project; Chr, chromosome; Mb, megabase; $\\beta$, regression coefficient representing the change in MAP (mmHg) per SD increase in the pGATE score. For the analysis 212,569 individuals were included from DeC and 190,635 individuals from UKB, with participants enrolled in the proteomics sub-study excluded. Reported GWAS hits for essential hypertension are those falling within 200 kb of the transcription start site; NR indicates that the SNP has not been attributed to a specific gene. Where multiple pGATE scores exist for a given protein (e.g., derived from different pQTL GWAS), only the score with the strongest association is reported.}\n"), as.character(.tbl_S2), fixed=TRUE) |> knitr::asis_output()
-} else {
-  ## Excel/Word output using flextable
-  flextable(table.data[, `:=`(p_cis_formatted=NULL, p_trans_formatted=NULL)]) %>%
-  theme_vanilla() %>%  # Apply theme immediately after flextable()
-  set_header_labels(
-    study = "pQTL study",
-    numobs = "N",
-    gene_symbol = "Gene",
-    gene_chrom = "Chrom",
-    gene_pos = "Start position (Mb)",
-    diversity = "Effective number of trans eQTLs",
-    logor_trans = "Log OR (trans)",
-    p_trans = "P-value (trans)",
-    logor_cis = "Log OR (cis)",
-    p_cis = "P-value (cis)",
-    GWAS.hit = "Reported GWAS hit"
-  ) %>%
-  flextable::italic(j = 3) %>%
-  flextable::bold(j = 11) %>%
-  fontsize(size = 8) %>%  # Smaller for Word
-    width(j = 1, width = 0.7) %>%
-    width(j = 2, width = 0.5) %>%
-    width(j = 3, width = 0.7) %>%
-    width(j = 4, width = 0.5) %>%
-    width(j = 5, width = 0.6) %>%
-    width(j = 6, width = 1) %>%
-    width(j = 7, width = 0.8) %>%
-    width(j = 8, width = 0.8) %>%
-    width(j = 9, width = 0.7) %>%
-    width(j = 10, width = 0.7) %>%
-    width(j = 11, width = 0.7) %>%
-  set_caption(
-    caption = "Putative core genes identified through aggregated trans pQTL scores."
-  )
-}
+             col.names=c("\\textit{Trans} pQTL clump", "Chrom",
+                         "Clump start position (Mb)",
+                         "Clump end position (Mb)",
+                         "Target genes",
+                         "Genes in or near \\textit{trans} pQTL clump"),
+             caption="\\textit{Trans} pQTLs for genes identified as putative core genes",
+             label="transpqtls")  %>%
+  footnote(general_title="",
+           threeparttable=TRUE,
+           footnote_as_chunk = TRUE,
+           general=paste("In the clumps of \\textit{trans} pQTLs, genes attributed to a GWAS hit within 200 kb are shown in bold italic; other nearby genes are shown in italic. Clump start and end positions are shown in bold when a GWAS hit falls within 200 kb."),
+           escape=FALSE) %>%
+  column_spec(1, width = "1cm") %>%
+  column_spec(2, width = "1cm") %>%
+  column_spec(3, width = "1.5cm", bold = .pqtl.has.gwas) %>%
+  column_spec(4, width = "1.5cm", bold = .pqtl.has.gwas) %>%
+  column_spec(5, width = "5cm", italic=TRUE) %>%
+  column_spec(6, width = "6cm") %>%
+  kable_styling(latex_options=c("HOLD_position"), font_size=8) |>
+  as.character() |> (\(x) gsub("}[ \t]+,", "},", x))() |>
+  knitr::asis_output()
 
 ```
 
 \newpage
+
 
 ```{r mrhevo, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1042,7 +886,8 @@ if (params$output_format == "pdf") {
 
 \newpage
 
-```{r proteins.core, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+
+```{r proteins.core, echo=FALSE, warning=FALSE, message=FALSE}
 options(warn=0)
 
   # if (binary) {
@@ -1141,139 +986,292 @@ if (params$output_format == "pdf") {
 
 \newpage
 
-```{r transeqtls, echo=FALSE, warning=FALSE, message=FALSE}
 
-## Filter to clumps whose target genes include at least one strict eQTL core gene (Table 1)
-.core_genes_eqtl_strict <- coregenes.eqtl.strict$gene_symbol
-clumpseqtl.print <- clumpseqtl.print[sapply(targetgenes, function(tg) {
-  any(trimws(strsplit(tg, ",\\s*")[[1]]) %in% .core_genes_eqtl_strict)
-})]
+```{r coregenes.eqtls, echo=FALSE, warning=FALSE, message=FALSE}
 
-## Bold columns 3 & 4 if a GWAS hit falls within 200 kb of the clump
-## Use per-chromosome startpos/endpos (bp) rather than absolute x.clumpStart/End
-.gwas.use <- gwas.hits[!is.na(startpos) & !is.na(endpos)]
+coregenes.eqtl.rest[, gene_startpos := as.integer(gene_startpos)]
+coregenes.eqtl.rest[, estimate_cis := as.numeric(estimate_cis)]
+coregenes.eqtl.rest[, gene_startpos := as.integer(gene_startpos)]
+coregenes.eqtl.rest[, gene_endpos := as.integer(gene_endpos)]
+coregenes.eqtl.rest[,
+  gene_chrom_fctr := factor(gene_chrom,
+                            levels=c(as.character(1:22), "X", "Y"))]
 
-## Helper: return GWAS-attributed gene symbols for a clump window
-.get_gwas_genes <- function(chr, lo, hi) {
-  hits <- .gwas.use[chrom == chr & endpos >= lo & startpos <= hi]
-  if (nrow(hits) == 0) return(character(0))
-  genes <- trimws(unlist(strsplit(hits$reported.genes, ",")))
-  unique(genes[genes != "NR" & genes != ""])
-}
+table.data <- coregenes.eqtl.rest[order(pvalue_trans),
+                   .(gene_symbol, gene_chrom,
+                    gene_pos=round(as.integer(gene_startpos) * 1E-6, 2),
+                    diversity=round(locus.diversity, 1),
+                    logor_trans=ifelse(is.na(gw.variance),
+                                paste0("(", round(estimate_trans, 3), ")"),
+                                round(estimate_trans * sqrt(gw.variance), 3)),
+                    p_trans=pvalue_trans,
+                    p_trans_formatted=format.z.aspvalue(z_trans),
+                    logor_cis=round(estimate_cis * sqrt(cis.variance), 3),
+                    p_cis=pvalue_cis,
+                    p_cis_formatted=format.z.aspvalue(z_cis),
+                    GWAS.hit=reported.genes)]
 
-## Build per-row GWAS gene lists
-.eqtl.gwas_genes <- lapply(seq_len(nrow(clumpseqtl.print)), function(i) {
-  chr <- as.character(clumpseqtl.print$chrom[i])
-  lo  <- clumpseqtl.print$start[i] * 1e6 - 2e5
-  hi  <- clumpseqtl.print$stop[i]  * 1e6 + 2e5
-  .get_gwas_genes(chr, lo, hi)
-})
-.eqtl.has.gwas <- sapply(.eqtl.gwas_genes, length) > 0
+table.data[, GWAS.hit := format_gwas_hit(GWAS.hit, latex = (params$output_format == "pdf"))]
 
-## Format nearby_genes: bold+italic for GWAS-attributed genes, italic for others
-clumpseqtl.fmt <- copy(clumpseqtl.print)
-clumpseqtl.fmt$nearby_genes <- sapply(seq_len(nrow(clumpseqtl.fmt)), function(i) {
-  gwas_genes <- .eqtl.gwas_genes[[i]]
-  nearby <- trimws(strsplit(as.character(clumpseqtl.fmt$nearby_genes[i]), ",")[[1]])
-  nearby <- nearby[nearby != "" & nearby != "."]
-  if (length(nearby) == 0) return("")
-  if (length(gwas_genes) > 0) {
-    ifelse(nearby %in% gwas_genes,
-           paste0("\\textbf{\\textit{", nearby, "}}"),
-           paste0("\\textit{", nearby, "}"))
-  } else {
-    paste0("\\textit{", nearby, "}")
-  } |> paste(collapse=", ")
-})
-
-knitr::kable(clumpseqtl.fmt,
+## render based on output format parameter
+if (params$output_format == "pdf") {
+  knitr::kable(table.data[, `:=`(p_cis=NULL, p_trans=NULL)],
              escape=FALSE,
              booktabs=TRUE,
              longtable=TRUE,
-             col.names=c("\\textit{Trans} eQTL clump", "Chrom",
-                         "Clump start position (Mb)",
-                         "Clump end position (Mb)",
-                         "Target genes",
-                         "Genes in or near \\textit{trans} eQTL clump"),
-             caption="\\textit{Trans} eQTLs for genes identified as putative core genes in Table \\ref{tab:coregenes.eqtls.strict}",
-             label="transeqtls")  %>%
-  footnote(general_title="",
-           threeparttable=TRUE,
-           footnote_as_chunk = TRUE,
-           general=paste("In the clumps of \\textit{trans} eQTLs, genes attributed to a GWAS hit within 200 kb are shown in bold italic; other nearby genes are shown in italic. Clump start and end positions are shown in bold when a GWAS hit falls within 200 kb."),
-           escape=FALSE) %>%
-  column_spec(1, width = "1cm") %>%
-  column_spec(2, width = "1cm") %>%
-  column_spec(3, width = "1.5cm", bold = .eqtl.has.gwas) %>%
-  column_spec(4, width = "1.5cm", bold = .eqtl.has.gwas) %>%
-  column_spec(5, width = "5cm", italic=TRUE) %>%
-  column_spec(6, width = "6cm") %>%
-    kable_styling(latex_options=c("HOLD_position"), font_size=8) |>
-  as.character() |> (\(x) gsub("}[ \t]+,", "},", x))() |>
-  knitr::asis_output()
+             col.names=c("Gene", "Chr", "Start position (Mb)",
+                         "Effective number of \\textit{trans} eQTLs",
+                         "Slope",
+                         "$P$ value",
+                         "Slope",
+                         "$P$ value",
+                         "Reported GWAS hit"),
+             caption=("Additional putative core genes defined by an association $P < 10^{-5}$ and effective \\textit{trans} eQTLs contributing to the eGATE score not less than five but less than eight."),
+             label="coregenes.eqtls") %>%
+  column_spec(1, italic=TRUE) %>%
+  column_spec(2, width = "0.6cm") %>%
+  column_spec(3, width = "1cm") %>%
+  column_spec(4, width = "1.5cm") %>%
+  column_spec(5, width = "1.25cm") %>%
+  column_spec(6, width = "1.5cm") %>%
+  column_spec(7, width = "1.25cm") %>%
+  column_spec(8, width = "1.2cm") %>%
+  column_spec(9, width = "1cm", bold=TRUE) %>%
+  add_header_above(c(" "=1, "Transcription site"=2,
+                     "\\\\textit{trans} score"=3,
+                     "\\\\textit{cis} score"=2, " "=1), escape=FALSE) %>%
+  kable_styling(latex_options=c("HOLD_position", "repeat_header")) -> .tbl_S1
+sub("\\end{longtable}", paste0("\\end{longtable}\n\\par\\noindent{\\footnotesize Chr, chromosome; Mb, megabase; Slope, regression coefficient representing the change in MAP (mmHg) per SD increase in the eGATE score. For the analysis 212,569 individuals were included. Reported GWAS hits for essential hypertension are those falling within 200 kb of the transcription start site; NR indicates that the SNP has not been attributed to a specific gene.}\n"), as.character(.tbl_S1), fixed=TRUE) |> knitr::asis_output()
+} else {
+  ## Excel/Word output using flextable
+  flextable(table.data[, `:=`(p_cis_formatted=NULL, p_trans_formatted=NULL)]) %>%
+  theme_vanilla() %>%  # Apply theme immediately after flextable()
+  set_header_labels(
+    gene_symbol = "Gene",
+    gene_chrom = "Chrom",
+    gene_pos = "Start position (Mb)",
+    diversity = "Effective number of trans eQTLs",
+    logor_trans = "Log OR (trans)",
+    p_trans = "P-value (trans)",
+    logor_cis = "Log OR (cis)",
+    p_cis = "P-value (cis)",
+    GWAS.hit = "Reported GWAS hit"
+  ) %>%
+  flextable::italic(j = 1) %>%
+  flextable::bold(j = 9) %>%
+  fontsize(size = 8) %>%  # Smaller for Word
+    width(j = 1, width = 0.7) %>%
+    width(j = 2, width = 0.5) %>%
+    width(j = 3, width = 0.6) %>%
+    width(j = 4, width = 1) %>%
+    width(j = 5, width = 0.8) %>%
+    width(j = 6, width = 0.8) %>%
+    width(j = 7, width = 0.7) %>%
+    width(j = 8, width = 0.7) %>%
+    width(j = 9, width = 0.7) %>%
+    align(align = "center", j = c(2, 3, 4, 5), part = "body") %>%
+    align(align = "center", part = "header") %>%
+  set_caption(
+    caption = "Putative core genes identified through aggregated trans eQTL scores."
+  )
+}
+
+```
+
+
+```{r coregenes.pqtls, echo=FALSE, warning=FALSE, message=FALSE}
+options(warn=0)
+coregenes.pqtl.rest[, gene_startpos := as.integer(gene_startpos)]
+coregenes.pqtl.rest[, estimate_cis := as.numeric(estimate_cis)]
+coregenes.pqtl.rest[, gene_startpos := as.integer(gene_startpos)]
+coregenes.pqtl.rest[, gene_endpos := as.integer(gene_endpos)]
+
+coregenes.pqtl.rest[,
+  gene_chrom_fctr := factor(gene_chrom,
+                            levels=c(as.character(1:22), "X", "Y"))]
+
+table.data <- coregenes.pqtl.rest[order(pvalue_trans),
+                 .(study=car::recode(studyid,
+                                     "21='FIN'; 31='IMP'; 26='INT'; 1008='DeC'; 50='UKB'"),
+                  gene_symbol, gene_chrom,
+                  gene_pos=ifelse(!is.na(gene_startpos),
+                                round(as.integer(gene_startpos) * 1E-6, 2), NA),
+                  diversity=round(locus.diversity, 1),
+                  logor_trans=round(estimate_trans * sqrt(gw.variance), 3),
+                  p_trans=pvalue_trans,
+                  p_trans_formatted=format.z.aspvalue(z_trans),
+                  logor_cis=round(estimate_cis * sqrt(cis.variance), 3),
+                  p_cis=pvalue_cis,
+                  p_cis_formatted=format.z.aspvalue(z_cis),
+                  GWAS.hit=reported.genes)]
+
+table.data[, GWAS.hit := format_gwas_hit(GWAS.hit, latex = (params$output_format == "pdf"))]
+
+## render based on output format parameter
+if (params$output_format == "pdf") {
+  knitr::kable(
+  table.data[, `:=`(p_trans=NULL, p_cis=NULL)],
+             escape=FALSE,
+             booktabs=TRUE,
+             longtable=TRUE,
+             col.names=c("pQTL study", "Gene", "Chr", "Start position (Mb)",
+                         "Effective number of \\textit{trans} pQTLs",
+                         "Slope",
+                         "$P$ value",
+                         "Slope",
+                         "$P$ value",
+                         "Reported GWAS hit"),
+             caption=("Additional putative core genes defined by an association $P < 10^{-6}$ and effective \\textit{trans} pQTLs contributing to the pGATE score not less than five but less than twenty."),
+             label="coregenes.pqtls")  %>%
+  column_spec(1, width="0.7cm") %>%
+  column_spec(2, italic=TRUE) %>%
+  column_spec(3, width = "0.6cm") %>%
+  column_spec(4, width = "1cm") %>%
+  column_spec(5, width = "1.1cm") %>%
+  column_spec(6, width = "1.25cm") %>%
+  column_spec(7, width = "1.25cm") %>%
+  column_spec(8, width = "1.25cm") %>%
+  column_spec(9, width = "1.1cm") %>%
+  column_spec(10, width = "1cm", bold=TRUE) %>%
+  add_header_above(c(" "=2, "Transcription site"=2,
+                     "\\\\textit{trans} score"=3,
+                     "\\\\textit{cis} score"=2, " "=1), escape=FALSE) %>%
+  kable_styling(latex_options=c("HOLD_position", "repeat_header"), font_size=9) -> .tbl_S2
+sub("\\end{longtable}", paste0("\\end{longtable}\n\\par\\noindent{\\footnotesize DeC, deCODE study; UKB, UK Biobank Pharma Proteomics Project; Chr, chromosome; Mb, megabase; Slope, regression coefficient representing the change in MAP (mmHg) per SD increase in the pGATE score. For the analysis 212,569 individuals were included from DeC and 190,635 individuals from UKB, with participants enrolled in the proteomics sub-study excluded. Reported GWAS hits for essential hypertension are those falling within 200 kb of the transcription start site; NR indicates that the SNP has not been attributed to a specific gene. Where multiple pGATE scores exist for a given protein (e.g., derived from different pQTL GWAS), only the score with the strongest association is reported.}\n"), as.character(.tbl_S2), fixed=TRUE) |> knitr::asis_output()
+} else {
+  ## Excel/Word output using flextable
+  flextable(table.data[, `:=`(p_cis_formatted=NULL, p_trans_formatted=NULL)]) %>%
+  theme_vanilla() %>%  # Apply theme immediately after flextable()
+  set_header_labels(
+    study = "pQTL study",
+    numobs = "N",
+    gene_symbol = "Gene",
+    gene_chrom = "Chrom",
+    gene_pos = "Start position (Mb)",
+    diversity = "Effective number of trans eQTLs",
+    logor_trans = "Log OR (trans)",
+    p_trans = "P-value (trans)",
+    logor_cis = "Log OR (cis)",
+    p_cis = "P-value (cis)",
+    GWAS.hit = "Reported GWAS hit"
+  ) %>%
+  flextable::italic(j = 3) %>%
+  flextable::bold(j = 11) %>%
+  fontsize(size = 8) %>%  # Smaller for Word
+    width(j = 1, width = 0.7) %>%
+    width(j = 2, width = 0.5) %>%
+    width(j = 3, width = 0.7) %>%
+    width(j = 4, width = 0.5) %>%
+    width(j = 5, width = 0.6) %>%
+    width(j = 6, width = 1) %>%
+    width(j = 7, width = 0.8) %>%
+    width(j = 8, width = 0.8) %>%
+    width(j = 9, width = 0.7) %>%
+    width(j = 10, width = 0.7) %>%
+    width(j = 11, width = 0.7) %>%
+  set_caption(
+    caption = "Putative core genes identified through aggregated trans pQTL scores."
+  )
+}
 
 ```
 
 \newpage
 
-```{r transpqtls, echo=FALSE, warning=FALSE, message=FALSE}
 
-## Filter clumps to those whose target genes include at least one strict pQTL core gene (Table 2)
-.core_genes_pqtl <- coregenes.pqtl.strict$gene_symbol
-clumpspqtl.print <- clumpspqtl.print[sapply(targetgenes, function(tg) {
-  any(trimws(strsplit(tg, ",\\s*")[[1]]) %in% .core_genes_pqtl)
-})]
+\newpage
 
-## Bold columns 3 & 4 if a GWAS hit falls within 200 kb of the clump
-## Build per-row GWAS gene lists
-.pqtl.gwas_genes <- lapply(seq_len(nrow(clumpspqtl.print)), function(i) {
-  chr <- as.character(clumpspqtl.print$chrom[i])
-  lo  <- clumpspqtl.print$start[i] * 1e6 - 2e5
-  hi  <- clumpspqtl.print$stop[i]  * 1e6 + 2e5
-  .get_gwas_genes(chr, lo, hi)
-})
-.pqtl.has.gwas <- sapply(.pqtl.gwas_genes, length) > 0
+## Supplementary Figures
 
-## Format nearby_genes: bold+italic for GWAS-attributed genes, italic for others
-clumpspqtl.fmt <- copy(clumpspqtl.print)
-clumpspqtl.fmt$nearby_genes <- sapply(seq_len(nrow(clumpspqtl.fmt)), function(i) {
-  gwas_genes <- .pqtl.gwas_genes[[i]]
-  nearby <- trimws(strsplit(as.character(clumpspqtl.fmt$nearby_genes[i]), ",")[[1]])
-  nearby <- nearby[nearby != "" & nearby != "."]
-  if (length(nearby) == 0) return("")
-  if (length(gwas_genes) > 0) {
-    ifelse(nearby %in% gwas_genes,
-           paste0("\\textbf{\\textit{", nearby, "}}"),
-           paste0("\\textit{", nearby, "}"))
-  } else {
-    paste0("\\textit{", nearby, "}")
-  } |> paste(collapse=", ")
-})
+```{r gwas.clump.graph.eqtl, echo=FALSE, fig.width=6.2, fig.height=5.5, fig.cap="\\label{fig:gwas.clump.graph.eqtl} Bipartite graph of \\textit{trans}-eQTL clumps containing GWAS hits for blood pressure or hypertension and their target genes from Table 1. Square nodes (top) represent \\textit{trans}-eQTL clumps labelled by chromosome and reported GWAS gene(s); circular nodes (bottom) represent target core genes sized by $-\\log_{10}(P)$ for association of the eGATE score with MAP and coloured by direction of effect. Only genes connected to two or more GWAS-hit clumps are shown."}
 
-knitr::kable(clumpspqtl.fmt,
-             escape=FALSE,
-             booktabs=TRUE,
-             longtable=TRUE,
-             col.names=c("\\textit{Trans} pQTL clump", "Chrom",
-                         "Clump start position (Mb)",
-                         "Clump end position (Mb)",
-                         "Target genes",
-                         "Genes in or near \\textit{trans} pQTL clump"),
-             caption="\\textit{Trans} pQTLs for genes identified as putative core genes",
-             label="transpqtls")  %>%
-  footnote(general_title="",
-           threeparttable=TRUE,
-           footnote_as_chunk = TRUE,
-           general=paste("In the clumps of \\textit{trans} pQTLs, genes attributed to a GWAS hit within 200 kb are shown in bold italic; other nearby genes are shown in italic. Clump start and end positions are shown in bold when a GWAS hit falls within 200 kb."),
-           escape=FALSE) %>%
-  column_spec(1, width = "1cm") %>%
-  column_spec(2, width = "1cm") %>%
-  column_spec(3, width = "1.5cm", bold = .pqtl.has.gwas) %>%
-  column_spec(4, width = "1.5cm", bold = .pqtl.has.gwas) %>%
-  column_spec(5, width = "5cm", italic=TRUE) %>%
-  column_spec(6, width = "6cm") %>%
-  kable_styling(latex_options=c("HOLD_position"), font_size=8) |>
-  as.character() |> (\(x) gsub("}[ \t]+,", "},", x))() |>
-  knitr::asis_output()
+source("graph_utils.R")
+.gwas_graph_dt <- gwas.dt[as.numeric(`P-VALUE`) < 5e-8 & !is.na(CHR_POS),
+                           .(chrom = as.character(CHR_ID),
+                             position = as.numeric(CHR_POS),
+                             reported_genes = `REPORTED GENE(S)`)]
+plot_clump_target_graph(
+    clumps_dt  = clumpseqtl.print,
+    gwas_dt    = .gwas_graph_dt,
+    coregenes_dt = coregenes.eqtl,
+    min_gwas_clumps = 2
+)
 
 ```
+
+\newpage
+
+```{=latex}
+\begin{adjustwidth}{-2cm}{-2cm}
+```
+
+```{r gwas.clump.graph.pqtl, echo=FALSE, out.width='100%', fig.pos='H', fig.cap="\\label{fig:gwas.clump.graph.pqtl} Bipartite graph of \\textit{trans}-pQTL clumps containing GWAS hits for blood pressure or hypertension and their target genes from Table 2. Square nodes (top) represent \\textit{trans}-pQTL clumps labelled by chromosome and reported GWAS gene(s); circular nodes (bottom) represent target core genes sized by $-\\log_{10}(P)$ for association of the pGATE score with MAP and coloured by direction of effect. Only genes connected to two or more GWAS-hit clumps are shown."}
+
+plot_clump_target_graph(
+    clumps_dt  = clumpspqtl.print,
+    gwas_dt    = .gwas_graph_dt,
+    coregenes_dt = coregenes.pqtl,
+    min_gwas_clumps = 2,
+    label_size = 3.5,
+    count_size = 3.5,
+    legend_text_size = 12
+)
+
+```
+
+```{=latex}
+\end{adjustwidth}
+```
+
+<!-- ```{r mrpqtl, echo=FALSE, out.width='100%', fig.cap="\\label{fig:mrpqtl} Mendelian randomisation analysis of the effect of the putative
+core proteins on MAP in UKB-PPP."}
+
+knitr::include_graphics("figures/mrpqtl.png")
+
+``` -->
+
+```{r mrpqtl, echo=FALSE, out.width='100%', fig.cap="\\label{fig:mrpqtl} Mendelian randomisation analysis of the effect of the putative core proteins on MAP in UKB-PPP. All trans-pQTLs contributing to the pGATE score of the putative core proteins are used as genetic instrumens. The effects of the genetic instrument on protein level and MAP are shown on the x-axis and y-axis, respectively. The size of each point is inversely proportional to the standard error of the ratio estimator. The slope of the straight line represents the maximum likelihood estimate of the causal effect parameter while the shaded ribbon reflects one standard error above and below this maximum likelihood estimate."}
+knitr::include_graphics('figures/mrpqtl.png')
+
+```
+
+<!--All trans-pQTLs contributing to the
+pGATE score of the putative core proteins are used as genetic instrumens. The effects of the
+genetic instrument on protein level and MAP are shown on the x-axis and y-axis,
+respectively. The size of each point is inversely proportional to the standard error of the ratio
+estimator. The slope of the straight line represents the maximum likelihood estimate of the
+causal effect parameter while the shaded ribbon reflects one standard error above and below
+this maximum likelihood estimate. -->
+
+```{r protein.gate.scatter, echo=FALSE, fig.width=6, fig.height=5.5, fig.cap="\\label{fig:protein.gate.scatter} Scatter plot comparing the regression coefficient for the association of MAP with the pGATE score (x-axis) against the regression coefficient for the association of MAP with the measured protein level (y-axis) for putative core genes. Colours indicate the pQTL study used to derive the pGATE score (deCODE or UKB-PPP). Gene symbols label each point. Only genes with available protein-level association data are shown."}
+
+library(ggplot2)
+.sc <- copy(coeffs.protein.core.joined)
+.sc <- .sc[study != "eQTLGen"]
+.sc[, protein_coeff := suppressWarnings(as.numeric(coeff))]
+.sc[, gate_coeff    := ifelse(is.na(gw.variance), NA_real_,
+                               estimate_trans * sqrt(gw.variance))]
+.sc <- .sc[!is.na(protein_coeff) & !is.na(gate_coeff)]
+.sc[, study_label := fcase(study == "DeC", "deCODE",
+                            study == "UKB", "UKB-PPP",
+                            default = study)]
+
+ggplot(.sc, aes(x = gate_coeff, y = protein_coeff,
+                colour = study_label)) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey70") +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey70") +
+  geom_point(size = 3, alpha = 0.85, shape = 16) +
+  geom_text(aes(label = Gene), size = 2.3, vjust = -0.75,
+            fontface = "italic", show.legend = FALSE) +
+  scale_colour_manual(name = "QTL study",
+                      values = c("deCODE"  = "steelblue",
+                                 "UKB-PPP" = "firebrick")) +
+  labs(x = "pGATE score slope (mmHg per SD)",
+       y = "Protein level slope (mmHg per SD)") +
+  theme_bw(base_size = 10) +
+  theme(legend.position = "right")
+
+```
+
+\newpage
+
