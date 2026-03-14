@@ -5,6 +5,7 @@
 #   make data     → fetch data from GitHub Release (skipped if local data present)
 #   make build    → render hypertension_paper.Rmd to output/hypertension_paper.pdf
 #   make clean    → remove compiled output
+#   make update-data → re-download data only if the remote asset is newer
 #   make clean-data → remove fetched data (not local data dir)
 #
 # Use system R libraries only (no renv restore, no installs):
@@ -16,7 +17,7 @@ RSCRIPT    := Rscript --vanilla
 MANUSCRIPT := hypertension_paper.Rmd
 OUTPUT_PDF := output/hypertension_paper.pdf
 
-.PHONY: all deps data build clean clean-data
+.PHONY: all deps data update-data build clean clean-data
 
 all: deps data build
 
@@ -35,6 +36,11 @@ deps:
 data:
 	@echo ">>> Checking / fetching data..."
 	$(RSCRIPT) R/fetch_data.R
+
+## Re-download data only if the remote asset is newer than local data
+update-data:
+	@echo ">>> Checking remote data for updates..."
+	$(RSCRIPT) R/fetch_data.R --update
 
 ## Run the analysis pipeline, which renders the manuscript
 ## (Always runs; data/ is not in the dependency list so we do not use file timestamps.)

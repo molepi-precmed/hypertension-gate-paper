@@ -1,5 +1,10 @@
 # Project guidelines for Claude
 
+## Building the manuscript from Rmarkdown
+- Use `make build` from the command line. 
+- Ignore ghostscript errors
+
+
 ## Scientific writing conventions
 - HUGO gene symbols should always be in italic (e.g. *ABCA1*), unless the text refers to the encoded protein and the protein has the same acronym as the gene — in that case use roman type
 - Regression coefficients in table headers should be labelled "Slope" rather than the Greek letter β, as "Slope" is more interpretable

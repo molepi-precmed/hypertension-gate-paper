@@ -22,7 +22,14 @@ plot_clump_target_graph <- function(clumps_dt, gwas_dt, coregenes_dt,
                                     min_gwas_clumps = 2,
                                     label_size = 2.8,
                                     count_size = 2.2,
-                                    legend_text_size = NULL) {
+                                    legend_text_size = NULL,
+                                    clump_width = 1.0,
+                                    target_width = NULL,
+                                    count_nudge_y = -0.8,
+                                    row_gap = 1.0,
+                                    clump_node_size = 3.5,
+                                    clump_label_nudge_y = 0.1,
+                                    target_label_nudge_y = -0.15) {
 
     ## --- 1. Identify GWAS-hit clumps ---
     ## For each clump, check if any GWAS SNP falls within its boundaries
@@ -137,7 +144,7 @@ plot_clump_target_graph <- function(clumps_dt, gwas_dt, coregenes_dt,
 
     ## Clumps at top (y = 1), targets at bottom (y = 0)
     is_clump <- V(g)$is_clump
-    layout_xy[is_clump, 2]  <- 1
+    layout_xy[is_clump, 2]  <- row_gap
     layout_xy[!is_clump, 2] <- 0
 
     ## Spread x-coordinates evenly within each layer to avoid overlap
@@ -151,10 +158,12 @@ plot_clump_target_graph <- function(clumps_dt, gwas_dt, coregenes_dt,
     ## Evenly space each layer; widen target spacing for label readability
     n_clumps  <- length(clump_order)
     n_targets <- length(target_order)
-    layout_xy[clump_order, 1]  <- seq(0, 1, length.out = n_clumps)
-    target_span <- max(1, n_targets - 1) * 0.05  # 0.05 units between targets
-    target_start <- 0.5 - target_span / 2
-    layout_xy[target_order, 1] <- seq(target_start, target_start + target_span,
+    layout_xy[clump_order, 1]  <- seq(0, clump_width, length.out = n_clumps)
+    if (is.null(target_width))
+        target_width <- max(1, n_targets - 1) * 0.05  # 0.05 units between targets
+    target_centre <- clump_width / 2
+    target_start  <- target_centre - target_width / 2
+    layout_xy[target_order, 1] <- seq(target_start, target_start + target_width,
                                        length.out = n_targets)
 
     ## Create manual layout data frame for ggraph
@@ -169,7 +178,7 @@ plot_clump_target_graph <- function(clumps_dt, gwas_dt, coregenes_dt,
         ## Clump nodes: black squares
         geom_node_point(
             aes(filter = is_clump),
-            shape = 15, size = 3.5, colour = "black"
+            shape = 15, size = clump_node_size, colour = "black"
         ) +
         ## Target gene nodes: circles sized by -log10(p), coloured by direction
         geom_node_point(
@@ -180,19 +189,19 @@ plot_clump_target_graph <- function(clumps_dt, gwas_dt, coregenes_dt,
         geom_node_text(
             aes(filter = is_clump, label = display_label),
             size = 2.5, fontface = "bold", colour = "black",
-            angle = 70, hjust = 0, nudge_y = 0.1
+            angle = 70, hjust = 0, nudge_y = clump_label_nudge_y
         ) +
         ## Target gene labels (below nodes, rotated)
         geom_node_text(
             aes(filter = !is_clump, label = display_label),
             size = label_size, fontface = "italic", colour = "grey20",
-            angle = 70, hjust = 1, nudge_y = -0.15
+            angle = 70, hjust = 1, nudge_y = target_label_nudge_y
         ) +
         ## Edge count below target gene labels
         geom_node_text(
             aes(filter = !is_clump, label = n_edges),
             size = count_size, colour = "grey40",
-            hjust = 0.5, nudge_y = -0.8
+            hjust = 0.5, nudge_y = count_nudge_y
         ) +
         scale_colour_manual(
             name = "Slope",

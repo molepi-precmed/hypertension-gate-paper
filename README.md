@@ -32,6 +32,7 @@ Useful targets:
 
 - `make deps`: restore the R environment from `renv.lock`
 - `make data`: download data into `data/` (skipped if local sibling data exists)
+- `make update-data`: re-download data only if the remote release asset is newer than local data
 - `make build`: render `hypertension_paper.Rmd` → `output/hypertension_paper.pdf`
 - `make clean`: remove compiled outputs
 - `make clean-data`: remove fetched data files under `data/` (keeps `.gitkeep`)
