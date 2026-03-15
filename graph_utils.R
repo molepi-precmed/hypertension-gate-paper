@@ -28,6 +28,8 @@ plot_clump_target_graph <- function(clumps_dt, gwas_dt, coregenes_dt,
                                     count_nudge_y = -0.8,
                                     row_gap = 1.0,
                                     clump_node_size = 3.5,
+                                    clump_label_size = 2.5,
+                                    clump_label_angle = 70,
                                     clump_label_nudge_y = 0.1,
                                     target_label_nudge_y = -0.15) {
 
@@ -188,8 +190,8 @@ plot_clump_target_graph <- function(clumps_dt, gwas_dt, coregenes_dt,
         ## Clump labels (above nodes, rotated)
         geom_node_text(
             aes(filter = is_clump, label = display_label),
-            size = 2.5, fontface = "bold", colour = "black",
-            angle = 70, hjust = 0, nudge_y = clump_label_nudge_y
+            size = clump_label_size, fontface = "bold", colour = "black",
+            angle = clump_label_angle, hjust = 0, nudge_y = clump_label_nudge_y
         ) +
         ## Target gene labels (below nodes, rotated)
         geom_node_text(
