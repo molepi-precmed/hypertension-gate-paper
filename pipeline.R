@@ -378,7 +378,7 @@ add.evidence.pqtl[,source:="pQTL"]
 add.evidence <- rbind(add.evidence.eqtl, add.evidence.pqtl)
 
 all.evidence.tbl <- all.evidence.tbl[add.evidence, on=.(gene_symbol=Gene), .(gene_symbol, gwas.validated, protein.validated, mr.validated, model.validated, monogenic.cause, drug.validated, source)]
-all.evidence.tbl[, model.validated := fifelse(model.validated=="+", "+", "-")]
+# all.evidence.tbl[, model.validated := fifelse(model.validated=="+", "+", "-")]
 all.evidence.tbl[, monogenic.cause := fifelse(monogenic.cause=="+", "+", "-")]
 all.evidence.tbl[, drug.validated := fifelse(drug.validated=="+", "+", "-")]
 
