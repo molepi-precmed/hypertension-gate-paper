@@ -346,13 +346,13 @@ phenoname <- "mean arterial pressure"
 coregenes.tbl <- rbind(coregenes.eqtl.strict, coregenes.pqtl.strict)
 
 ## Join with MR
-coregenes.tbl[all.mrres, on=.(gene_symbol=exposure), mr.pvalue:=pvalue]
-
+coregenes.tbl <- coregenes.tbl[all.mrres, on=.(gene_symbol=exposure)]
+setnames(coregenes.tbl, "pvalue", "mr.pvalue")
 cols.select <- c("gene_symbol", "reported.genes", "estimate_trans", 
-                 "protein.coeff", "protein.pvalue", "mr.pvalue", "pvalue_cis", "locus.diversity")
+                 "protein.coeff", "protein.pvalue", "mr.pvalue", "pvalue_cis", "J")
 
 all.evidence.tbl <- coregenes.tbl[, ..cols.select]
-all.evidence.tbl[, cis.validated := ifelse(pvalue_cis < 0.001, TRUE, FALSE)]
+all.evidence.tbl[, cis.validated := ifelse(pvalue_cis < 1e-4, TRUE, FALSE)]
 all.evidence.tbl[, gwas.hit := fifelse(is.na(reported.genes), FALSE, TRUE)]
 all.evidence.tbl[, gwas.validated := fifelse((cis.validated | gwas.hit), "+", "-")]
 all.evidence.tbl[is.na(gwas.validated), gwas.validated := "-"]
@@ -360,8 +360,8 @@ all.evidence.tbl[is.na(gwas.validated), gwas.validated := "-"]
 all.evidence.tbl[is.na(protein.coeff), protein.validated := "."]
 all.evidence.tbl[protein.pvalue > 1e-4, protein.validated := "0"]
 all.evidence.tbl[is.na(protein.validated), protein.validated := fifelse(sign(protein.coeff) != sign(estimate_trans), "-", "+")]
-all.evidence.tbl[, mr.validated := fifelse(mr.pvalue<0.01&locus.diversity>20, "+", ".")]
-all.evidence.tbl[, mr.validated := fifelse(mr.pvalue>=0.01&locus.diversity>20, "-", mr.validated)]
+all.evidence.tbl[, mr.validated := fifelse(mr.pvalue<0.01&J>10, "+", ".")]
+all.evidence.tbl[, mr.validated := fifelse(mr.pvalue>=0.01&J>10, "-", mr.validated)]
 
 ## Read other evidence from the files
 add.evidence.eqtl <- fread(file.path(working.dir, "gene_hypertension_eQTL.csv"))
@@ -379,6 +379,9 @@ add.evidence <- rbind(add.evidence.eqtl, add.evidence.pqtl)
 
 all.evidence.tbl <- all.evidence.tbl[add.evidence, on=.(gene_symbol=Gene), .(gene_symbol, gwas.validated, protein.validated, mr.validated, model.validated, monogenic.cause, drug.validated, source)]
 # all.evidence.tbl[, model.validated := fifelse(model.validated=="+", "+", "-")]
+## Impute data from https://www.medrxiv.org/content/10.1101/2025.07.01.25330624v1 
+all.evidence.tbl[source=="eQTL", protein.validated := "0"]
+all.evidence.tbl[gene_symbol=="SLC31A2", protein.validated := "+"]
 all.evidence.tbl[, monogenic.cause := fifelse(monogenic.cause=="+", "+", "-")]
 all.evidence.tbl[, drug.validated := fifelse(drug.validated=="+", "+", "-")]
 
