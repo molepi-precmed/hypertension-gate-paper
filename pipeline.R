@@ -395,6 +395,7 @@ coeffs.protein.core.joined[, coeff := as.character(coeff)]
 coeffs.protein.core.joined[is.na(coeff), coeff := "."]
 coeffs.protein.core.joined[is.na(pvalue.formatted), pvalue.formatted := "."]
 setorder(coeffs.protein.core.joined, pvalue_trans)
+coeffs.protein.core.joined <- coeffs.protein.core.joined[!duplicated(Gene)]
 
 rmarkdown::render(
     'hypertension_paper.Rmd',
