@@ -575,7 +575,7 @@ knitr::kable(xls.tbl.latex,
              pack_rows("Analysis based on circulating proteins",
                        start_row=pqtl.start,
                        end_row=pqtl.end) %>%
-             kable_styling(font_size=8,
+             kable_styling(font_size=9,
                           latex_options=c("HOLD_position")) -> .tbl_evidence
 .note_lines <- c(
   "Symbols: \\textbf{\\texttt{+}} indicates that the criterion is met; \\textbf{\\texttt{-}} indicates that it is not; \\texttt{.} data is missing.",
