@@ -384,6 +384,7 @@ all.evidence.tbl[source=="eQTL", protein.validated := "0"]
 all.evidence.tbl[gene_symbol=="SLC31A2", protein.validated := "+"]
 all.evidence.tbl[, monogenic.cause := fifelse(monogenic.cause=="+", "+", "-")]
 all.evidence.tbl[, drug.validated := fifelse(drug.validated=="+", "+", "-")]
+all.evidence.tbl <- all.evidence.tbl[!duplicated(gene_symbol)]
 
 cols.select <- c(cols.select, "z_trans", "pvalue_trans", "studyid", "gw.variance")
 coeffs.protein.core.joined <- coeffs.protein.core[coregenes.tbl[, ..cols.select], on="Gene==gene_symbol", nomatch=NA] 
